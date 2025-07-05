@@ -18,4 +18,5 @@ public class UserAuthenticationService implements UserDetailsService {
                 .map(UserAuthentication::new)
                 .orElseThrow(()->new RuntimeException("Not Found"));
     }
+
 }
