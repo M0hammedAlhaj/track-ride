@@ -1,6 +1,5 @@
 package com.example.trackride.Infrastructures.Jwt;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -8,17 +7,15 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class JwtService {
+public class JwtGeneration {
 
     private final SecretKey secretKey;
 
-    public JwtService() {
-        String key = "2XwD8eRxMvT4n9VpLF9UyBG5cD7NlKmKqY6fO9qxMzU="; // Example key (should be 256 bits and secure)
+    public JwtGeneration() {
+        String key = "2XwD8eRxMvT4n9VpLF9UyBG5cD7NlKmKqY6fO9qxMzU=";
         this.secretKey = Keys.hmacShaKeyFor
                 (Decoders.BASE64.decode(key));
 
