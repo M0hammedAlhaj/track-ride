@@ -1,4 +1,4 @@
-package com.example.trackride.Core.User;
+package com.example.trackride.Core.User.Entity;
 
 
 import com.example.trackride.Core.Shared.BaseEntity;
