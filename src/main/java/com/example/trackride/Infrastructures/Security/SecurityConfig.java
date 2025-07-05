@@ -34,9 +34,4 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         return null;
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return  new BCryptPasswordEncoder();
-    }
 }
