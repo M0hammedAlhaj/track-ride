@@ -1,0 +1,36 @@
+package com.example.trackride.Infrastructures.Jpa.User;
+
+import com.example.trackride.Core.User.Entity.User;
+import com.example.trackride.Core.User.Exception.UserNotFoundException;
+import com.example.trackride.Core.User.Repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+@AllArgsConstructor
+public class JpaUserRepository implements UserRepository {
+
+    private final EntityManager entityManager;
+
+    @Transactional
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return  entityManager.
+                createQuery("SELECT u FROM User u WHERE u.email = :email",User.class)
+                .setParameter("email", email)
+                .getResultList().stream().findFirst();
+    }
+
+    @Override
+    @Transactional
+    public User findByEmailOrThrow(String email) {
+        return findByEmail(email)
+                .orElseThrow(()->new UserNotFoundException(email));
+    }
+
+
+}
