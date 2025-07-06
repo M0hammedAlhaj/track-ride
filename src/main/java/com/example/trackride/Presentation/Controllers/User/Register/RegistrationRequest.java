@@ -21,14 +21,4 @@ public class RegistrationRequest {
 
     @NotBlank(message = "Confirm password is required")
     private String confirmPassword;
-
-    public RegistrationRequest(String name, String email, String password, String confirmPassword) {
-        if (!password.equals(confirmPassword)) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.confirmPassword = confirmPassword;
-    }
 }
