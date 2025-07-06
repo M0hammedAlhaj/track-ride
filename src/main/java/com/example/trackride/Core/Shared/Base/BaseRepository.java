@@ -9,7 +9,7 @@ public interface BaseRepository<T> {
     Optional<T> findById(UUID id);
 
 
-    void save(T entity);
+    Optional<T> save(T entity);
 
 
 }

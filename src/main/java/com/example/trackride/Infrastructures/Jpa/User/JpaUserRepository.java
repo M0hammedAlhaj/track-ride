@@ -29,9 +29,16 @@ public class JpaUserRepository implements UserRepository {
     @Override
     @Transactional
     public Optional<User> findById(UUID id) {
-        return entityManager.createQuery("SELECT u FROM User u where u.id=:id",User.class)
-                .setParameter("id",id)
+        return entityManager.createQuery("SELECT u FROM User u where u.id=:id", User.class)
+                .setParameter("id", id)
                 .getResultList().stream().findFirst();
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> save(User entity) {
+        entityManager.persist(entity);
+        return Optional.of(entity);
     }
 
     @Override
