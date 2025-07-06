@@ -2,12 +2,14 @@ package com.example.trackride.Core.Shared.Base;
 
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @MappedSuperclass
+@Getter
 public abstract class BaseEntity {
 
     @Id
