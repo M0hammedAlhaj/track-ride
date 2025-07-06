@@ -1,6 +1,6 @@
 package com.example.trackride.Presentation.Controllers.User;
 
-import static com.example.trackride.Presentation.Shared.BaseApiController.API_BASE;
+import static com.example.trackride.Presentation.Controllers.Shared.BaseApiController.API_BASE;
 
 public abstract class UserBaseController {
 
