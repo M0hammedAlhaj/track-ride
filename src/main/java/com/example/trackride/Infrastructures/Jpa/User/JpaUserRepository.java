@@ -41,5 +41,4 @@ public class JpaUserRepository implements UserRepository {
                 .orElseThrow(() -> new UserNotFoundException(email));
     }
 
-
 }

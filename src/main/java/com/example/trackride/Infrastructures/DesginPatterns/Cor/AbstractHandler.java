@@ -1,4 +1,4 @@
-package com.example.trackride.Infrastructures.Cor;
+package com.example.trackride.Infrastructures.DesginPatterns.Cor;
 
 public abstract class  AbstractHandler<T> implements Handler<T> {
 

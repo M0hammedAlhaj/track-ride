@@ -1,6 +1,7 @@
 package com.example.trackride.Infrastructures.Jwt.Validation;
 
-import com.example.trackride.Infrastructures.Cor.AbstractHandler;
+import com.example.trackride.Infrastructures.DesginPatterns.Cor.AbstractHandler;
+import com.example.trackride.Infrastructures.Jwt.Exception.JwtValidationException;
 import com.example.trackride.Infrastructures.Jwt.JwtExtracting;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class JwtUserIdValidator extends AbstractHandler<JwtValidationContext> {
         String actualId = jwtExtracting.extractId(context.token());
 
         if (!actualId.equals(context.expectedUserId())) {
-            throw new IllegalArgumentException("User ID in token does not match request");
+            throw new JwtValidationException("User ID in token does not match the request");
         }
     }
 }

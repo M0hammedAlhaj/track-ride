@@ -14,4 +14,5 @@ public interface UserRepository extends BaseRepository<User> {
     Optional<User> findById(UUID id);
 
     User findByEmailOrThrow(String email) throws UsernameNotFoundException;
+    
 }

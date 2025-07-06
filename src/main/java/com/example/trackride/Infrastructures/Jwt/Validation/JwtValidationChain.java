@@ -1,6 +1,6 @@
 package com.example.trackride.Infrastructures.Jwt.Validation;
 
-import com.example.trackride.Infrastructures.Cor.Handler;
+import com.example.trackride.Infrastructures.DesginPatterns.Cor.Handler;
 import org.springframework.stereotype.Component;
 
 @Component
