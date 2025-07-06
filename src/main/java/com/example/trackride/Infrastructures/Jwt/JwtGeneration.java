@@ -1,16 +1,19 @@
 package com.example.trackride.Infrastructures.Jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.UUID;
+import java.util.function.Function;
 
-@Service
+@Component
 @Getter
 public class JwtGeneration {
 
@@ -36,6 +39,24 @@ public class JwtGeneration {
                 .compact();
     }
 
+    public Claims parseToken(String token) {
+        return Jwts.parser().verifyWith(secretKey)
+                .build().parseSignedClaims(token).getPayload();
+    }
 
+
+    private <T> T extractClaim(String token,
+                               Function<Claims, T> claimsResolver) {
+        final Claims claims = parseToken(token);
+        return claimsResolver.apply(claims);
+    }
+
+    public String extractId(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Date extractExpireDate(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
 
 }
