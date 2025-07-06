@@ -30,6 +30,10 @@ public class JwtExtracting {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractEmail(String token) {
+        return extractClaim(token, Claims::getIssuer);
+    }
+
     public Date extractExpireDate(String token) {
         return extractClaim(token, Claims::getExpiration);
     }

@@ -24,7 +24,7 @@ public class JwtGeneration {
     }
 
 
-    public String generateToken(UUID id) {
+    public String generateToken(UUID id,String email) {
 
         return Jwts
                 .builder()
@@ -33,6 +33,7 @@ public class JwtGeneration {
                 .expiration(new Date(System.currentTimeMillis()
                         + 60 * 60 * 60 * 1000))
                 .signWith(secretKey)
+                .issuer(email)
                 .compact();
     }
 

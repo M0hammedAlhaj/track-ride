@@ -12,11 +12,11 @@ public class JwtValidation {
 
     private final JwtExtracting jwtExtracting;
 
-    private void validate(String token, UUID expectedId) {
-        String extractedId = jwtExtracting.extractId(token);
+    public void validate(String token, String email) {
+        String extractEmail = jwtExtracting.extractEmail(token);
         Date expiration = jwtExtracting.extractExpireDate(token);
 
-        boolean idMismatch = !extractedId.equals(expectedId.toString());
+        boolean idMismatch = !extractEmail.equals(email);
         boolean isExpired = expiration.before(new Date());
 
         if (idMismatch) {

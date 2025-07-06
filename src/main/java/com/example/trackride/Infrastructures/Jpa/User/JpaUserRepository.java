@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @AllArgsConstructor
@@ -16,12 +17,20 @@ public class JpaUserRepository implements UserRepository {
 
     private final EntityManager entityManager;
 
-    @Transactional
     @Override
+    @Transactional
     public Optional<User> findByEmail(String email) {
-        return  entityManager.
-                createQuery("SELECT u FROM User u WHERE u.email = :email",User.class)
+        return entityManager.
+                createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                 .setParameter("email", email)
+                .getResultList().stream().findFirst();
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> findById(UUID id) {
+        return entityManager.createQuery("SELECT u FROM User u where u.id=:id",User.class)
+                .setParameter("id",id)
                 .getResultList().stream().findFirst();
     }
 
@@ -29,7 +38,7 @@ public class JpaUserRepository implements UserRepository {
     @Transactional
     public User findByEmailOrThrow(String email) {
         return findByEmail(email)
-                .orElseThrow(()->new UserNotFoundException(email));
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 
 

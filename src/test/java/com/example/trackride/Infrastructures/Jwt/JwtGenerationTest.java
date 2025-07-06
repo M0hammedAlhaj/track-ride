@@ -29,7 +29,7 @@ class JwtGenerationTest {
     void generateTokenSuccessful() {
         // Given
         UUID uuid = UUID.randomUUID();
-        String token = undertest.generateToken(uuid);
+        String token = undertest.generateToken(uuid,"");
 
         // When: Parse the token
         Claims claims = Jwts.parser()
