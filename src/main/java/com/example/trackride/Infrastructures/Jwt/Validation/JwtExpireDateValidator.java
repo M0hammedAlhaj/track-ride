@@ -1,6 +1,6 @@
 package com.example.trackride.Infrastructures.Jwt.Validation;
 
-import com.example.trackride.Core.DesginPatterns.Cor.AbstractHandler;
+import com.example.trackride.Infrastructures.Cor.AbstractHandler;
 import com.example.trackride.Infrastructures.Jwt.JwtExtracting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

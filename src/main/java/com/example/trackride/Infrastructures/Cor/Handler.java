@@ -1,4 +1,4 @@
-package com.example.trackride.Core.DesginPatterns.Cor;
+package com.example.trackride.Infrastructures.Cor;
 
 public interface Handler<T> {
 

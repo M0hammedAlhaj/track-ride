@@ -1,4 +1,4 @@
-package com.example.trackride.Infrastructures.Security;
+package com.example.trackride.Infrastructures.Security.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

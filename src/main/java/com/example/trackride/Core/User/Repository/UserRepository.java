@@ -1,6 +1,6 @@
 package com.example.trackride.Core.User.Repository;
 
-import com.example.trackride.Core.Shared.BaseRepository;
+import com.example.trackride.Core.Shared.Base.BaseRepository;
 import com.example.trackride.Core.User.Entity.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

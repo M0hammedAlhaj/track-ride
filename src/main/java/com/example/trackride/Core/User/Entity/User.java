@@ -1,7 +1,7 @@
 package com.example.trackride.Core.User.Entity;
 
 
-import com.example.trackride.Core.Shared.BaseEntity;
+import com.example.trackride.Core.Shared.Base.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.example.trackride.Infrastructures.Security;
+package com.example.trackride.Infrastructures.Security.Config;
 
 
 import com.example.trackride.Infrastructures.Security.Filter.JwtFilter;

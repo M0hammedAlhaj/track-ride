@@ -1,4 +1,4 @@
-package com.example.trackride.Core.Shared;
+package com.example.trackride.Core.Shared.Base;
 
 
 import jakarta.persistence.*;
