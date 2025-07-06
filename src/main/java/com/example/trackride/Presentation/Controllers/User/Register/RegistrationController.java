@@ -1,16 +1,18 @@
-package com.example.trackride.Presentation.Controllers.Clinic.Register;
+package com.example.trackride.Presentation.Controllers.User.Register;
 
 import com.example.trackride.Application.User.DTO.UserRegistrationDTO;
 import com.example.trackride.Application.User.UseCase.UserRegistrationUseCase;
 import com.example.trackride.Core.User.Entity.User;
-import com.example.trackride.Presentation.Controllers.Clinic.UserBaseController;
+import com.example.trackride.Presentation.Controllers.User.UserBaseController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController(UserBaseController.USER_API_BASE)
+@RestController
+@RequestMapping(UserBaseController.USER_API_BASE)
 @RequiredArgsConstructor
 public class RegistrationController {
 
@@ -29,7 +31,7 @@ public class RegistrationController {
                 request.getPassword(),
                 request.getName()));
 
-        return ResponseEntity.ok(registrationResponse.RegisterResponse(user));
+        return ResponseEntity.ok(new RegistrationResponse(user));
     }
 
 }

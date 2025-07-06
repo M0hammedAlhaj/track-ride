@@ -1,4 +1,4 @@
-package com.example.trackride.Presentation.Controllers.Clinic;
+package com.example.trackride.Presentation.Controllers.User;
 
 import static com.example.trackride.Presentation.Shared.BaseApiController.API_BASE;
 
