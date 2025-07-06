@@ -10,11 +10,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JwtValidation {
 
-    private final JwtGeneration jwtGeneration;
+    private final JwtExtracting jwtExtracting;
 
     private void validate(String token, UUID expectedId) {
-        String extractedId = jwtGeneration.extractId(token);
-        Date expiration = jwtGeneration.extractExpireDate(token);
+        String extractedId = jwtExtracting.extractId(token);
+        Date expiration = jwtExtracting.extractExpireDate(token);
 
         boolean idMismatch = !extractedId.equals(expectedId.toString());
         boolean isExpired = expiration.before(new Date());
