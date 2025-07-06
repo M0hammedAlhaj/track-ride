@@ -23,10 +23,15 @@ public class UserRegistrationUseCase {
                 dto.password(),
                 dto.name());
 
+        if (userRepository.findByEmail(dto.email()).isPresent()) {
+            throw new RuntimeException("Email already in use");
+        }
+
+        User userSaved = userRepository.save(user)
+                .orElseThrow();
+
         publisher.publishEvent(new UserRegisteredEvent(user.getId(), user.getEmail()));
 
-        return userRepository.save(user)
-                .orElseThrow();
+        return userSaved;
     }
-
 }

@@ -1,7 +1,6 @@
 package com.example.trackride.Infrastructures.Jpa.User;
 
 import com.example.trackride.Core.User.Entity.User;
-import com.example.trackride.Core.User.Exception.UserNotFoundException;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -41,11 +40,5 @@ public class JpaUserRepository implements UserRepository {
         return Optional.of(entity);
     }
 
-    @Override
-    @Transactional
-    public User findByEmailOrThrow(String email) {
-        return findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
-    }
 
 }

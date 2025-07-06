@@ -15,14 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(UserBaseController.USER_API_BASE)
 @RequiredArgsConstructor
 public class RegistrationController {
-
     private final UserRegistrationUseCase userRegistrationUseCase;
-
-    private RegistrationResponse registrationResponse;
 
     @PostMapping("/register")
     public ResponseEntity<?> invoke(@RequestBody RegistrationRequest request) {
-
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
@@ -31,7 +27,6 @@ public class RegistrationController {
                 request.getPassword(),
                 request.getName()));
 
-        return ResponseEntity.ok(new RegistrationResponse(user));
+        return RegistrationResponse.success(user);
     }
-
 }
