@@ -10,9 +10,9 @@ public abstract class  AbstractHandler<T> implements Handler<T> {
     }
 
     @Override
-    public void Handle(T request) {
+    public void handle(T request) {
         if (nextHandler != null) {
-            nextHandler.Handle(request);
+            nextHandler.handle(request);
         }
     }
 

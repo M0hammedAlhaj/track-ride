@@ -4,5 +4,5 @@ public interface Handler<T> {
 
 
      void setNext(Handler<T> nextHandler);
-     void Handle(T request);
+     void handle(T request);
 }

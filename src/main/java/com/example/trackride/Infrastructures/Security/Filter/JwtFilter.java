@@ -2,7 +2,8 @@ package com.example.trackride.Infrastructures.Security.Filter;
 
 import com.example.trackride.Core.User.Repository.UserRepository;
 import com.example.trackride.Infrastructures.Jwt.JwtExtracting;
-import com.example.trackride.Infrastructures.Jwt.JwtValidation;
+import com.example.trackride.Infrastructures.Jwt.Validation.JwtValidationChain;
+import com.example.trackride.Infrastructures.Jwt.Validation.JwtValidationContext;
 import com.example.trackride.Infrastructures.Security.Auth.UserAuthentication;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,7 +24,7 @@ import java.util.UUID;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtExtracting jwtExtracting;
-    private final JwtValidation jwtValidation;
+    private final JwtValidationChain jwtValidation;
     private final UserRepository userRepository;
 
     @Override
@@ -45,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     .map(UserAuthentication::new)
                     .orElseThrow();
 
-            jwtValidation.validate(token, id);
+            jwtValidation.validate(new JwtValidationContext(token, id));
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(userDetails,
