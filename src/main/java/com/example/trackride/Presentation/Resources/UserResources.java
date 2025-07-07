@@ -17,5 +17,4 @@ public class UserResources {
         this.email = user.getEmail();
         this.name = user.getName();
     }
-
 }

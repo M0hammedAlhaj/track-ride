@@ -15,7 +15,6 @@ public class RegistrationResponse {
         response.put("status", "success");
         response.put("user", new UserResources(user));
         response.put("message", "Registration Successful");
-
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
