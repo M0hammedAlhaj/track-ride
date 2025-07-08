@@ -2,7 +2,6 @@ package com.example.trackride.Infrastructures.Security.Config;
 
 import com.example.trackride.Core.User.Service.PasswordEncryptor;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -17,5 +16,11 @@ public class BcryptPasswordEncryptor implements PasswordEncryptor {
     @Override
     public String hash(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
+
+    }
+
+    @Override
+    public boolean matches(String rawPassword, String hashedPassword) {
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.trackride.Infrastructures.Jpa.User;
 
+import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import com.example.trackride.Core.User.Entity.User;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -27,6 +28,13 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     @Transactional
+    public User findByEmailOrThrow(String email) {
+        return findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException(email));
+    }
+
+    @Override
+    @Transactional
     public Optional<User> findById(UUID id) {
         return entityManager.createQuery("SELECT u FROM User u where u.id=:id", User.class)
                 .setParameter("id", id)
@@ -35,9 +43,9 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     @Transactional
-    public Optional<User> save(User entity) {
+    public User save(User entity) {
         entityManager.persist(entity);
-        return Optional.of(entity);
+        return entity;
     }
 
 

@@ -19,18 +19,17 @@ public class UserRegistrationUseCase {
     private final ApplicationEventPublisher publisher;
 
     public User execute(UserRegistrationDTO dto) {
-        User user = userFactory.create(dto.email(),
-                dto.password(),
-                dto.name());
-
         if (userRepository.findByEmail(dto.email()).isPresent()) {
             throw new RuntimeException("Email already in use");
         }
 
-        User userSaved = userRepository.save(user)
-                .orElseThrow();
+        User user = userFactory.create(dto.email(),
+                dto.password(),
+                dto.name());
 
-        publisher.publishEvent(new UserRegisteredEvent(user.getId(), user.getEmail()));
+        User userSaved = userRepository.save(user);
+
+        publisher.publishEvent(new UserRegisteredEvent(userSaved.getId(), userSaved.getEmail()));
 
         return userSaved;
     }

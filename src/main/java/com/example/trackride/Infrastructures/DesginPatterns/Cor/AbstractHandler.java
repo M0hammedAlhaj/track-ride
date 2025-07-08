@@ -1,6 +1,6 @@
 package com.example.trackride.Infrastructures.DesginPatterns.Cor;
 
-public abstract class  AbstractHandler<T> implements Handler<T> {
+public abstract class AbstractHandler<T> implements Handler<T> {
 
     private Handler<T> nextHandler;
 
