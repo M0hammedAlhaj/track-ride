@@ -4,6 +4,7 @@ package com.example.trackride.Application.User.UseCase;
 import com.example.trackride.Application.User.DTO.UserRegistrationDTO;
 import com.example.trackride.Application.User.Event.UserRegisteredEvent;
 import com.example.trackride.Core.User.Entity.User;
+import com.example.trackride.Core.User.Exception.Auth.UserAccessException;
 import com.example.trackride.Core.User.Factory.UserFactory;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class UserRegistrationUseCase {
 
     public User execute(UserRegistrationDTO dto) {
         if (userRepository.findByEmail(dto.email()).isPresent()) {
-            throw new RuntimeException("Email already in use");
+            throw new UserAccessException("Email already in use");
         }
 
         User user = userFactory.create(dto.email(),
