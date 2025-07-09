@@ -35,7 +35,6 @@ class UserLoginUseCaseTest {
 
     @Test
     public void user_login_should_login_secsessful() {
-
         User user = User.builder().name("example")
                 .email("example@gmail.com")
                 .password("hashed").build();
@@ -51,7 +50,6 @@ class UserLoginUseCaseTest {
 
     @Test
     public void user_login_email_not_found() {
-
         String email = "example@gmail.com";
 
         when(userRepository.findByEmailOrThrow(email))
@@ -64,8 +62,6 @@ class UserLoginUseCaseTest {
 
     @Test
     public void user_login_password_does_not_match() {
-
-
         User user = User.builder().name("example")
                 .email("example@gmail.com")
                 .password("hashed").build();
@@ -73,11 +69,11 @@ class UserLoginUseCaseTest {
         when(userRepository.findByEmailOrThrow("example@gmail.com"))
                 .thenReturn(user);
 
-        when(passwordEncryptor.matches("123456", "hashed")).thenReturn(false);
+        when(passwordEncryptor.matches("123456", "hashed"))
+                .thenReturn(false);
 
         assertThrows(UserAccessException.class,()->{
             underTest.execute(createDto());
         });
-
     }
 }

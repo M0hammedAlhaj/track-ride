@@ -14,7 +14,6 @@ import java.util.UUID;
 @Repository
 @AllArgsConstructor
 public class JpaUserRepository implements UserRepository {
-
     private final EntityManager entityManager;
 
     @Override
@@ -47,6 +46,4 @@ public class JpaUserRepository implements UserRepository {
         entityManager.persist(entity);
         return entity;
     }
-
-
 }
