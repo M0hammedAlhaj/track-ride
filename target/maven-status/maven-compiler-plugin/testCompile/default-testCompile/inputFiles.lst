@@ -1,1 +1,3 @@
+/home/sa/track-ride/src/test/java/com/example/trackride/Application/User/UseCase/UserRegistrationUseCaseTest.java
+/home/sa/track-ride/src/test/java/com/example/trackride/Infrastructures/Jwt/JwtGenerationTest.java
 /home/sa/track-ride/src/test/java/com/example/trackride/TrackRideApplicationTests.java
