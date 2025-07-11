@@ -20,7 +20,6 @@ public class UserRegistrationUseCase {
     private final ApplicationEventPublisher publisher;
 
     public User execute(UserRegistrationDTO dto) {
-
         User user = userFactory.create(dto.email(),
                 dto.password(),
                 dto.name());
