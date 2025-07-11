@@ -26,16 +26,12 @@ public class GlobalExceptionHandler {
                         (existing, replacement) -> existing
                 ));
 
-        List<String> objectErrors = ex.getBindingResult().getGlobalErrors().stream()
-                .map(error ->
-                        Optional.ofNullable(error.getDefaultMessage()).orElse("Invalid request"))
-                .collect(Collectors.toList());
-
         response.put("message", "Validation failed");
         response.put("fieldErrors", fieldErrors);
-        response.put("objectErrors", objectErrors);
 
-        return ResponseEntity.badRequest().body(response);
+
+        return ResponseEntity.
+                badRequest().body(response);
     }
 }
 
