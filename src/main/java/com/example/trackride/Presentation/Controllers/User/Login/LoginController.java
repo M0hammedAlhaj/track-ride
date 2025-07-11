@@ -8,10 +8,7 @@ import com.example.trackride.Presentation.Controllers.User.UserBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(UserBaseController.USER_API_BASE)
@@ -20,7 +17,7 @@ public class LoginController {
     private final UserLoginUseCase userLoginUseCase;
     private final JwtGeneration jwtGeneration;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> userLogin(@Valid @RequestBody LoginRequest loginRequest) {
         User user = userLoginUseCase.execute(new UserLoginDTO(loginRequest.getEmail(), loginRequest.getPassword()));
         String token = jwtGeneration.generateToken(user.getId(), user.getEmail());
