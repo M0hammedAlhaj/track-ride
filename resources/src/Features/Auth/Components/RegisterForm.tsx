@@ -10,6 +10,7 @@ import {
 } from "../validation/RegisterValidation";
 
 const RegisterForm = () => {
+  
   const {
     register,
     handleSubmit,
