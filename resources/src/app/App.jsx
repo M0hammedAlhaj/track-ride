@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "../Features/Auth/Pages/LoginPage";
-import Home from "../Home";
+import Home from "../Features/Home/Pages/Home";
 import RegisterPage from "../Features/Auth/Pages/RegisterPage";
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
-          path="/dashboard"
+          path="/dashboard"ص
           element={<div> {localStorage.getItem("token")}</div>}
         />
       </Routes>
