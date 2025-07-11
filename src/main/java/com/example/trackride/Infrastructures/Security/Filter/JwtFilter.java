@@ -1,5 +1,6 @@
 package com.example.trackride.Infrastructures.Security.Filter;
 
+import com.example.trackride.Core.User.Exception.Auth.UserAccessException;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import com.example.trackride.Infrastructures.Jwt.JwtExtracting;
 import com.example.trackride.Infrastructures.Jwt.Validation.JwtValidationChain;
@@ -44,7 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UserAuthentication userDetails = userRepository.findById(UUID.fromString(id))
                     .map(UserAuthentication::new)
-                    .orElseThrow();
+                    .orElseThrow(()->new UserAccessException("User don't have Access"));
 
             jwtValidation.validate(new JwtValidationContext(token, id));
 

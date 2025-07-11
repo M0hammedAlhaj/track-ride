@@ -21,7 +21,8 @@ public class RegistrationController {
     @PostMapping("/register")
     public ResponseEntity<?> invoke(@Valid @RequestBody RegistrationRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
+            throw new IllegalArgumentException("Password and confirmation password do not match. " +
+                    "Please make sure both fields are the same.");
         }
 
         User user = userRegistrationUseCase.execute(new UserRegistrationDTO(request.getEmail(),
