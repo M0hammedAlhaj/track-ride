@@ -16,11 +16,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {
-
     private String name;
 
     private String email;
 
     private String password;
-
 }
