@@ -2,6 +2,7 @@ package com.example.trackride.Infrastructures.Security.Filter;
 
 import com.example.trackride.Core.User.Exception.Auth.UserAccessException;
 import com.example.trackride.Core.User.Repository.UserRepository;
+import com.example.trackride.Infrastructures.Jwt.Exception.JwtValidationException;
 import com.example.trackride.Infrastructures.Jwt.JwtExtracting;
 import com.example.trackride.Infrastructures.Jwt.Validation.JwtValidationChain;
 import com.example.trackride.Infrastructures.Jwt.Validation.JwtValidationContext;
@@ -63,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } catch (io.jsonwebtoken.ExpiredJwtException |
+        } catch (JwtValidationException |io.jsonwebtoken.ExpiredJwtException |
                  io.jsonwebtoken.security.SignatureException |
                  io.jsonwebtoken.MalformedJwtException ex) {
 

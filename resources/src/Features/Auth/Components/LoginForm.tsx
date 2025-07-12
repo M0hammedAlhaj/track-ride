@@ -11,7 +11,7 @@ export default function LoginForm() {
   const { login, loading, error } = useAuth();
 
   const navigate = useNavigate();
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -23,8 +23,6 @@ export default function LoginForm() {
       navigate("/dashboard");
     } catch {}
   };
-
-  const validateForm = () => {};
 
   return (
     <div className="min-h-screen flex items-center justify-center ">

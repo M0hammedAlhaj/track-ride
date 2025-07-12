@@ -1,9 +1,5 @@
 import React from 'react'
 
-function types() { }
-
-export default types
-
 export interface RegisterPayload {
     name: string;
     email: string;
@@ -15,4 +11,6 @@ export interface LoginPayload {
     email: string,
     password: string
 }
+
+
 

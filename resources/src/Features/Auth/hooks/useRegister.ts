@@ -3,6 +3,7 @@ import { register as registerApi } from "../api";
 import { useState } from "react";
 
 export function useRegister() {
+  
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
