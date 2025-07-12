@@ -8,9 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserFactory {
-
     private final PasswordEncryptor passwordEncryptor;
-
 
     public User create(String email, String password, String name) {
         return User.builder()

@@ -29,4 +29,13 @@ public class JpaVehicleRepository implements VehicleRepository {
         em.persist(entity);
         return entity;
     }
+
+    @Override
+    public boolean vehicleExistByLicense(String license) {
+        return !em.createQuery("SELECT 1 FROM Vehicle v WHERE v.license = :license")
+                .setParameter("license", license)
+                .setMaxResults(1)
+                .getResultList()
+                .isEmpty();
+    }
 }

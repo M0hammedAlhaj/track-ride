@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -28,4 +29,11 @@ public class User extends BaseEntity {
 
     @OneToMany
     private Set<Vehicle> vehicles;
+
+    public void assignVehicle(Vehicle vehicle) {
+        if (this.vehicles == null) {
+            this.vehicles = new HashSet<>();
+        }
+        this.vehicles.add(vehicle);
+    }
 }
