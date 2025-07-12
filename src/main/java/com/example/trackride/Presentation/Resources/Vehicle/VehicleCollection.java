@@ -8,8 +8,7 @@ import java.util.Set;
 
 @Getter
 public class VehicleCollection {
-
-    private List<VehicleResources> vehicleResources;
+    private final List<VehicleResources> vehicleResources;
 
     public VehicleCollection(Set<Vehicle> vehicles) {
        vehicleResources= vehicles.stream().map(VehicleResources::new)

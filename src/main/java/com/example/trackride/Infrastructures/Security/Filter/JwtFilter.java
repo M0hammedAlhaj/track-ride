@@ -29,36 +29,53 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String headerAuthorization = request.getHeader("Authorization");
-        String token = null;
-        String id = null;
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+        try {
+            String headerAuthorization = request.getHeader("Authorization");
+            String token = null;
+            String id = null;
 
-        if (headerAuthorization != null && headerAuthorization.startsWith("Bearer ")) {
-            token = headerAuthorization.substring(7);
-            id = jwtExtracting.extractId(token);
+            if (headerAuthorization != null && headerAuthorization.startsWith("Bearer ")) {
+                token = headerAuthorization.substring(7);
+                id = jwtExtracting.extractId(token);
+            }
+
+            if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserAuthentication userDetails = userRepository.findById(UUID.fromString(id))
+                        .map(UserAuthentication::new)
+                        .orElseThrow(() -> new UserAccessException("User doesn't have access"));
+
+                jwtValidation.validate(new JwtValidationContext(token, id));
+
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            }
+
+            filterChain.doFilter(request, response);
+
+        } catch (io.jsonwebtoken.ExpiredJwtException |
+                 io.jsonwebtoken.security.SignatureException |
+                 io.jsonwebtoken.MalformedJwtException ex) {
+
+            sendUnauthorizedResponse(response, "Invalid or tampered JWT token");
+
+        } catch (UserAccessException ex) {
+            sendUnauthorizedResponse(response, ex.getMessage());
         }
-        if (id != null &&
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication() == null) {
-
-            UserAuthentication userDetails = userRepository.findById(UUID.fromString(id))
-                    .map(UserAuthentication::new)
-                    .orElseThrow(()->new UserAccessException("User don't have Access"));
-
-            jwtValidation.validate(new JwtValidationContext(token, id));
-
-            UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails,
-                            null, userDetails.getAuthorities());
-
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
-        }
-        filterChain.doFilter(request, response);
-
+    }
+    private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"message\":\"" + message + "\"}");
     }
 }

@@ -20,6 +20,5 @@ public class JwtExpireDateValidator extends AbstractHandler<JwtValidationContext
         if (expiration.before(new Date())) {
             throw new JwtValidationException("Token has expired.");
         }
-
     }
 }
