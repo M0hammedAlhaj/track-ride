@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Table(name = "Vehicles")
 @Entity
 @Data
@@ -27,4 +29,16 @@ public class Vehicle extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return Objects.equals(license, vehicle.license);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(license);
+    }
 }
