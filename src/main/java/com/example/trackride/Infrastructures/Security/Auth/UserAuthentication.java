@@ -30,4 +30,6 @@ public class UserAuthentication implements UserDetails {
     public String getUsername() {
         return user.getEmail();
     }
+
+    public String getId() { return user.getId().toString(); }
 }

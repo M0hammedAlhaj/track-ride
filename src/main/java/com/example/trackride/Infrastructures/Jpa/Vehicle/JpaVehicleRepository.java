@@ -1,5 +1,6 @@
 package com.example.trackride.Infrastructures.Jpa.Vehicle;
 
+import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import com.example.trackride.Core.Vehicle.Entity.Vehicle;
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
 import jakarta.persistence.EntityManager;
@@ -28,6 +29,14 @@ public class JpaVehicleRepository implements VehicleRepository {
     public Vehicle save(Vehicle entity) {
         em.persist(entity);
         return entity;
+    }
+
+    @Override
+    public Vehicle update(Vehicle entity) {
+        if (em.find(Vehicle.class, entity.getId()) == null) {
+            throw new ResourceNotFoundException("Vehicle not found");
+        }
+        return em.merge(entity);
     }
 
     @Override

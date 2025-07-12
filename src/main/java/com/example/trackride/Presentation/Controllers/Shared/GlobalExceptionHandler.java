@@ -1,5 +1,7 @@
 package com.example.trackride.Presentation.Controllers.Shared;
 
+import com.example.trackride.Core.Shared.Exception.DuplicateResourceException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,6 +31,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.
                 badRequest().body(response);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateResource(DuplicateResourceException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
 }
 

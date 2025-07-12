@@ -34,6 +34,9 @@ public class User extends BaseEntity {
         if (this.vehicles == null) {
             this.vehicles = new HashSet<>();
         }
+        if(vehicles.contains(vehicle)) {
+            return;
+        }
         this.vehicles.add(vehicle);
     }
 }

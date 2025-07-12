@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 public class LoginResponse {
 
-
     public static ResponseEntity<HashMap<String, Object>> success(String token) {
         HashMap<String, Object> response = new HashMap<>();
         response.put("status", "success");

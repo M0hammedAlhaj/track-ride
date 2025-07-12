@@ -46,4 +46,13 @@ public class JpaUserRepository implements UserRepository {
         entityManager.persist(entity);
         return entity;
     }
+
+    @Override
+    @Transactional
+    public User update(User entity) {
+        if(entityManager.find(User.class, entity.getId()) == null) {
+            throw new ResourceNotFoundException(entity.getEmail());
+        }
+        return  entityManager.merge(entity);
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.trackride.Application.Vehicle.UseCase;
 
 import com.example.trackride.Application.Vehicle.DTO.VehicleRegistrationDTO;
-import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
+import com.example.trackride.Core.Shared.Exception.DuplicateResourceException;
 import com.example.trackride.Core.Vehicle.Entity.Vehicle;
 import com.example.trackride.Core.Vehicle.Factory.VehicleFactory;
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
@@ -16,7 +16,7 @@ public class VehicleRegistrationUseCase {
 
     public Vehicle execute(VehicleRegistrationDTO dto) {
         if (vehicleRepository.vehicleExistByLicense(dto.license())) {
-            throw new ResourceNotFoundException("License not found");
+            throw new DuplicateResourceException("Vehicle with license '" + dto.license() + "' already exists.");
         }
 
         Vehicle vehicle = factory.create(dto.license(), dto.model(), dto.color());
