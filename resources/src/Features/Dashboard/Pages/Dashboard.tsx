@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import NavBar from '../../../Components/NavBar';
-import CarCard from '../Components/CardCar';
-
+import React, { useState, useEffect } from "react";
+import NavBar from "../../../Components/NavBar";
+import CarCard from "../Components/CardCar";
 const StatCard = ({ title, value, icon, trend, trendValue }) => (
   <div className="group relative overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-emerald-400/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25">
     <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-teal-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -11,22 +10,30 @@ const StatCard = ({ title, value, icon, trend, trendValue }) => (
           {icon}
         </div>
         {trend && (
-          <div className={`flex items-center text-xs px-2 py-1 rounded-full ${trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-            {trend === 'up' ? '↗' : '↘'} {trendValue}
+          <div
+            className={`flex items-center text-xs px-2 py-1 rounded-full ${
+              trend === "up"
+                ? "bg-green-500/20 text-green-400"
+                : "bg-red-500/20 text-red-400"
+            }`}
+          >
+            {trend === "up" ? "↗" : "↘"} {trendValue}
           </div>
         )}
       </div>
       <h3 className="text-gray-300 text-sm font-medium mb-2">{title}</h3>
-      <p className="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors duration-300">{value}</p>
+      <p className="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors duration-300">
+        {value}
+      </p>
     </div>
   </div>
 );
 
-
-
 const Dashboard = () => {
   const [mounted, setMounted] = useState(false);
-  
+
+  const isLoggedIn = localStorage.getItem("token") !== null;
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -58,25 +65,54 @@ const Dashboard = () => {
 
       <div className="relative z-10">
         <NavBar />
-        
+
         <div className="container mx-auto px-6 mt-12 mb-8">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4">
               لوحة التحكم الرئيسية
             </h1>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-              تتبع صيانة سياراتك بسهولة واحصل على تذكيرات ذكية لضمان الأداء الأمثل
+              تتبع صيانة سياراتك بسهولة واحصل على تذكيرات ذكية لضمان الأداء
+              الأمثل
             </p>
           </div>
         </div>
 
         {/* Statistics Section */}
         <div className="container  px-6 mb-12 mx-auto">
-          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <StatCard title="عدد السيارات" value="2" icon="🚗" trend="up" trendValue="+1" />
-            <StatCard title="آخر صيانة" value="10 يوليو 2025" icon="🛠️" trend={null} trendValue={null} />
-            <StatCard title="الصيانات هذا الشهر" value="3" icon="📅" trend="up" trendValue="+2" />
-            <StatCard title="متوسط الصيانة" value="كل 45 يوم" icon="⏱️" trend={null} trendValue={null}/>
+          <div
+            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+            }`}
+          >
+            <StatCard
+              title="عدد السيارات"
+              value="2"
+              icon="🚗"
+              trend="up"
+              trendValue="+1"
+            />
+            <StatCard
+              title="آخر صيانة"
+              value="10 يوليو 2025"
+              icon="🛠️"
+              trend={null}
+              trendValue={null}
+            />
+            <StatCard
+              title="الصيانات هذا الشهر"
+              value="3"
+              icon="📅"
+              trend="up"
+              trendValue="+2"
+            />
+            <StatCard
+              title="متوسط الصيانة"
+              value="كل 45 يوم"
+              icon="⏱️"
+              trend={null}
+              trendValue={null}
+            />
           </div>
         </div>
 
@@ -88,7 +124,13 @@ const Dashboard = () => {
               <h2 className="text-2xl font-bold text-white mb-2">سياراتي</h2>
               <div className="w-20 h-1 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full"></div>
             </div>
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-1000 delay-300 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-1000 delay-300 ${
+                mounted
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-8"
+              }`}
+            >
               {cars.map((car, i) => (
                 <CarCard key={i} {...car} />
               ))}

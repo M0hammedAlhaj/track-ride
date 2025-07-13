@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useLogin } from "../hooks/useLogin";
 import type { LoginPayload } from "../types";
 export default function LoginForm() {
   const [form, setForm] = useState<LoginPayload>({
@@ -8,7 +8,7 @@ export default function LoginForm() {
     password: "",
   });
 
-  const { login, loading, error } = useAuth();
+  const { login, loading, error } = useLogin();
 
   const navigate = useNavigate();
 

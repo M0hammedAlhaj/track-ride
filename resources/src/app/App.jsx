@@ -3,8 +3,11 @@ import LoginPage from "../Features/Auth/Pages/LoginPage";
 import Home from "../Features/Home/Pages/Home";
 import RegisterPage from "../Features/Auth/Pages/RegisterPage";
 import Dashboard from "../Features/Dashboard/Pages/Dashboard";
-
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../app/AuthContext";
 function App() {
+  const { isLoggedIn } = useAuth();
+
   return (
     <BrowserRouter>
       <Routes>
@@ -13,7 +16,9 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/dashboard"
-          element={<Dashboard/>}
+          element={
+            isLoggedIn ? <Dashboard /> : <Navigate to="/login" replace />
+          }
         />
       </Routes>
     </BrowserRouter>
