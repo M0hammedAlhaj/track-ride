@@ -1,6 +1,7 @@
 package com.example.trackride.Application.User.MaintenanceRecord.UseCase;
 
-import com.example.trackride.Application.User.MaintenanceRecord.DTO.MaintenanceRecordRegistrationDTO;
+import com.example.trackride.Application.MaintenanceRecord.DTO.MaintenanceRecordRegistrationDTO;
+import com.example.trackride.Application.MaintenanceRecord.UseCase.MaintenanceRegistrationUseCase;
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.MaintenanceRecord.Factory.MaintenanceRecordFactory;
 import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecordRepository;

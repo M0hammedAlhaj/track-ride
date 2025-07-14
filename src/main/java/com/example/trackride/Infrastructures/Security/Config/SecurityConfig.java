@@ -24,6 +24,8 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("api/v1/users/assign-vehicle").authenticated()
+                        .requestMatchers("api/v1/users/assign-maintenance").authenticated()
+                        .requestMatchers("api/v1/users/vehicles").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

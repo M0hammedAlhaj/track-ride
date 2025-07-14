@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -19,8 +21,8 @@ public class JpaVehicleRepository implements VehicleRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<Vehicle> findById(UUID id) {
-        return em.createQuery("SELECT v FROM Vehicle v WHERE v.id=:id ",Vehicle.class)
-                .setParameter("id",id)
+        return em.createQuery("SELECT v FROM Vehicle v WHERE v.id=:id ", Vehicle.class)
+                .setParameter("id", id)
                 .getResultList().stream().findFirst();
     }
 
@@ -32,6 +34,7 @@ public class JpaVehicleRepository implements VehicleRepository {
     }
 
     @Override
+    @Transactional
     public Vehicle update(Vehicle entity) {
         if (em.find(Vehicle.class, entity.getId()) == null) {
             throw new ResourceNotFoundException("Vehicle not found");
@@ -40,6 +43,7 @@ public class JpaVehicleRepository implements VehicleRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean vehicleExistByLicense(String license) {
         return !em.createQuery("SELECT 1 FROM Vehicle v WHERE v.license = :license")
                 .setParameter("license", license)
@@ -47,4 +51,13 @@ public class JpaVehicleRepository implements VehicleRepository {
                 .getResultList()
                 .isEmpty();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<Vehicle> findVehiclesByOwnerId(UUID ownerId) {
+        return new HashSet<>(em.createQuery("SELECT v FROM Vehicle v WHERE v.owner.id = :ownerId", Vehicle.class)
+                .setParameter("ownerId", ownerId)
+                .getResultList());
+    }
+
 }

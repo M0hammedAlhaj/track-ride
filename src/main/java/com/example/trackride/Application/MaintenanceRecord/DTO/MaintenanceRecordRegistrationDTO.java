@@ -1,4 +1,4 @@
-package com.example.trackride.Application.User.MaintenanceRecord.DTO;
+package com.example.trackride.Application.MaintenanceRecord.DTO;
 
 import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceType;
 
