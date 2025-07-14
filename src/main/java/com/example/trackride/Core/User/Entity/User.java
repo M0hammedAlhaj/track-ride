@@ -27,16 +27,17 @@ public class User extends BaseEntity {
 
     private String password;
 
-    @OneToMany
+    @OneToMany(mappedBy = "owner")
     private Set<Vehicle> vehicles;
 
     public void assignVehicle(Vehicle vehicle) {
         if (this.vehicles == null) {
             this.vehicles = new HashSet<>();
         }
-        if(vehicles.contains(vehicle)) {
+        if (vehicles.contains(vehicle)) {
             return;
         }
+        vehicle.setOwner(this);
         this.vehicles.add(vehicle);
     }
 }

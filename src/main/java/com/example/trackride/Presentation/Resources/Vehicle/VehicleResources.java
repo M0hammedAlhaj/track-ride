@@ -5,6 +5,8 @@ import lombok.Getter;
 
 @Getter
 public class VehicleResources {
+    private String id;
+
     private String license;
 
     private String model;
@@ -15,5 +17,6 @@ public class VehicleResources {
         this.license = vehicle.getLicense();
         this.model = vehicle.getModel();
         this.color = vehicle.getColor();
+        this.id = vehicle.getId().toString();
     }
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserRegistrationUseCase {
-
     private final UserRepository userRepository;
     private final UserFactory userFactory;
     private final ApplicationEventPublisher publisher;

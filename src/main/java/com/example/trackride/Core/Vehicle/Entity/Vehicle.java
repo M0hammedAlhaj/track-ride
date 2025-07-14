@@ -30,6 +30,10 @@ public class Vehicle extends BaseEntity {
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
+    public boolean belongsTo(User user) {
+        return this.owner.equals(user);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

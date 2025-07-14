@@ -1,6 +1,5 @@
 package com.example.trackride.Core.Vehicle.Factory;
 
-import com.example.trackride.Core.User.Entity.User;
 import com.example.trackride.Core.Vehicle.Entity.Vehicle;
 import org.springframework.stereotype.Component;
 

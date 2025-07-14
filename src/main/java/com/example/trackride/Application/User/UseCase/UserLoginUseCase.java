@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserLoginUseCase {
-
     private final UserRepository userRepository;
     private final PasswordEncryptor passwordEncryptor;
 
