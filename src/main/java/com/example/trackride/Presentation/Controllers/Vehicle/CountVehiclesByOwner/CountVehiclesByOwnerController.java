@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(VehicleBaseController.VEHICLE_BASE_API)
 @RequiredArgsConstructor
 public class CountVehiclesByOwnerController {
-
     private final CountVehiclesByOwnerUseCase countVehiclesByOwnerUseCase;
 
     @GetMapping("/count-vehicles")
