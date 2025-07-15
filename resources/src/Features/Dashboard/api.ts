@@ -5,4 +5,4 @@ export const last_service = () =>
     axiosWithAuth.get("/users/last-Maintenance");
     
 export const count_vehicles = () =>
-    axiosWithAuth.get("/vhicles/count-vehicles");
+    axiosWithAuth.get("/vehicles/count-vehicles");
