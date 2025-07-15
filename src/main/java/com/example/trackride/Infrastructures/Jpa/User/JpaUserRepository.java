@@ -33,6 +33,15 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findUserByIdWithVehicles(UUID userId) {
+        return entityManager.createQuery("SELECT u FROM User u JOIN FETCH u.vehicles WHERE u.id =: userId",
+                        User.class)
+                .setParameter("userId", userId)
+                .getResultList()
+                .stream().findFirst();
+    }
+
+    @Override
     @Transactional
     public Optional<User> findById(UUID id) {
         return entityManager.createQuery("SELECT u FROM User u where u.id=:id", User.class)
@@ -50,9 +59,9 @@ public class JpaUserRepository implements UserRepository {
     @Override
     @Transactional
     public User update(User entity) {
-        if(entityManager.find(User.class, entity.getId()) == null) {
+        if (entityManager.find(User.class, entity.getId()) == null) {
             throw new ResourceNotFoundException(entity.getEmail());
         }
-        return  entityManager.merge(entity);
+        return entityManager.merge(entity);
     }
 }

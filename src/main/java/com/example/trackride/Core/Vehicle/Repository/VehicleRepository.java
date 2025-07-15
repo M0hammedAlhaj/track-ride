@@ -10,4 +10,6 @@ public interface VehicleRepository extends BaseRepository<Vehicle> {
     boolean vehicleExistByLicense(String license);
 
     Set<Vehicle> findVehiclesByOwnerId(UUID ownerId);
+
+    Vehicle findVehicleByIdWithMaintenanceRecord(UUID vehicleId);
 }

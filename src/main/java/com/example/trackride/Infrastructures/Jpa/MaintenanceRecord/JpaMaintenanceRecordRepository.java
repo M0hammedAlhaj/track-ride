@@ -40,4 +40,13 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
         }
         return em.merge(entity);
     }
+
+    @Override
+    public Optional<MaintenanceRecord> findLastMaintenanceRecordByVehicleId(UUID vehicleId) {
+        return em.createQuery("SELECT m FROM MaintenanceRecord m " +
+                        "WHERE m.vehicle.id =:vehicleId " +
+                        "ORDER BY m.createdAt desc ", MaintenanceRecord.class)
+                .setParameter("vehicleId", vehicleId)
+                .getResultList().stream().findFirst();
+    }
 }

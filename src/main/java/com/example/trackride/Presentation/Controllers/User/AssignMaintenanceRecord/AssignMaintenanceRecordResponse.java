@@ -1,7 +1,7 @@
 package com.example.trackride.Presentation.Controllers.User.AssignMaintenanceRecord;
 
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
-import com.example.trackride.Presentation.Resources.MaintenanceRecordResources;
+import com.example.trackride.Presentation.Resources.MaintenanceRecord.MaintenanceRecordResources;
 import com.example.trackride.Presentation.Resources.Vehicle.VehicleResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

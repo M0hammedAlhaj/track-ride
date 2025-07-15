@@ -60,4 +60,10 @@ public class JpaVehicleRepository implements VehicleRepository {
                 .getResultList());
     }
 
+    @Override
+    public Vehicle findVehicleByIdWithMaintenanceRecord(UUID vehicleId) {
+        return em.createQuery("SELECT v FROM Vehicle v JOIN FETCH v.maintenanceRecords WHERE v.id =:vehicleId ", Vehicle.class)
+                .setParameter("vehicleId", vehicleId)
+                .getSingleResult();
+    }
 }
