@@ -73,6 +73,7 @@ public class JpaVehicleRepository implements VehicleRepository {
     public Long countVehiclesByOwnerId(UUID ownerId) {
         return em.createQuery("SELECT COUNT(v) FROM Vehicle v WHERE v.owner =:ownerId"
                         , Long.class)
+                .setParameter("ownerId", ownerId)
                 .getSingleResult();
     }
 }
