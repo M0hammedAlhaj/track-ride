@@ -13,8 +13,7 @@ public class AssignVehicleResponse  {
     public static ResponseEntity<Map<String, Object>> success(User user) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("user", new UserResources(user));
-        response.put("vehicle",new VehicleCollection(user.getVehicles()));
+        response.put("data", new UserResources(user));
         return ResponseEntity.ok(response);
     }
 }

@@ -1,135 +1,513 @@
-import React, { useState, useEffect } from "react";
-import NavBar from "../../../Components/NavBar"; // Adjust path
-import CarCard from "../Components/CardCar"; // Adjust path
-import { useLastService } from "../hooks/useLastService";
+"use client"
 
-const StatCard = ({ title, value, icon, trend, trendValue }) => (
-  <div className="group relative overflow-hidden bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/20 hover:border-emerald-400/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/25">
-    <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/10 to-teal-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-    <div className="relative z-10">
-      <div className="flex items-center justify-between mb-4">
-        <div className="text-3xl filter drop-shadow-lg group-hover:scale-110 transition-transform duration-300">
-          {icon}
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { MetricCard } from "../Components/MetricCard"
+
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts"
+import { Car, Calendar, AlertTriangle, Plus, Clock, TrendingUp, Wrench, CheckCircle, Activity } from "lucide-react"
+import React from "react"
+import NavBar from "../../../Components/NavBar"
+
+// Types
+interface DashboardStats {
+  totalVehicles: number
+  upcoming: number
+  overdue: number
+  lastVehicle: string
+}
+
+interface ChartDataItem {
+  status: string
+  count: number
+  color: string
+}
+
+interface UpcomingMaintenance {
+  id: string
+  vehicleName: string
+  licensePlate: string
+  lastServiceDate: string
+  nextReminderDate: string
+  priority: "high" | "medium" | "low"
+}
+
+interface RecentActivity {
+  id: string
+  vehicleName: string
+  maintenanceType: string
+  date: string
+  status: "completed" | "scheduled" | "cancelled"
+}
+
+interface DashboardData {
+  stats: DashboardStats
+  chartData: ChartDataItem[]
+  upcomingMaintenance: UpcomingMaintenance[]
+  recentActivity: RecentActivity[]
+}
+
+// Dummy Data
+const dashboardData: DashboardData = {
+  stats: {
+    totalVehicles: 12,
+    upcoming: 3,
+    overdue: 1,
+    lastVehicle: "BMW X5",
+  },
+  chartData: [
+    { status: "نشط", count: 8, color: "#10b981" },
+    { status: "يحتاج صيانة", count: 3, color: "#f59e0b" },
+    { status: "قيد الصيانة", count: 1, color: "#3b82f6" },
+  ],
+  upcomingMaintenance: [
+    {
+      id: "1",
+      vehicleName: "Toyota Camry",
+      licensePlate: "JOD-123",
+      lastServiceDate: "2024-11-15",
+      nextReminderDate: "2025-01-15",
+      priority: "high",
+    },
+    {
+      id: "2",
+      vehicleName: "BMW X5",
+      licensePlate: "JOD-456",
+      lastServiceDate: "2024-10-20",
+      nextReminderDate: "2025-01-20",
+      priority: "medium",
+    },
+    {
+      id: "3",
+      vehicleName: "Mercedes C-Class",
+      licensePlate: "JOD-789",
+      lastServiceDate: "2024-12-01",
+      nextReminderDate: "2025-02-01",
+      priority: "low",
+    },
+    {
+      id: "4",
+      vehicleName: "Honda Accord",
+      licensePlate: "JOD-321",
+      lastServiceDate: "2024-11-30",
+      nextReminderDate: "2025-01-30",
+      priority: "medium",
+    },
+  ],
+  recentActivity: [
+    {
+      id: "1",
+      vehicleName: "Toyota Camry",
+      maintenanceType: "تغيير الزيت",
+      date: "2024-12-15",
+      status: "completed",
+    },
+    {
+      id: "2",
+      vehicleName: "BMW X5",
+      maintenanceType: "فحص الفرامل",
+      date: "2024-12-14",
+      status: "completed",
+    },
+    {
+      id: "3",
+      vehicleName: "Mercedes C-Class",
+      maintenanceType: "صيانة دورية",
+      date: "2024-12-13",
+      status: "scheduled",
+    },
+    {
+      id: "4",
+      vehicleName: "Honda Accord",
+      maintenanceType: "تغيير الإطارات",
+      date: "2024-12-12",
+      status: "completed",
+    },
+    {
+      id: "5",
+      vehicleName: "Nissan Altima",
+      maintenanceType: "فحص المحرك",
+      date: "2024-12-11",
+      status: "cancelled",
+    },
+  ],
+}
+
+// Chart Component
+function MaintenanceChart({ data }: { data: ChartDataItem[] }) {
+  const [chartType, setChartType] = useState<"pie" | "bar">("pie")
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-lg">
+          <p className="text-white font-medium">{payload[0].payload.status}</p>
+          <p className="text-emerald-400">العدد: {payload[0].value}</p>
         </div>
-        {trend && (
-          <div
-            className={`flex items-center text-xs px-2 py-1 rounded-full ${
-              trend === "up"
-                ? "bg-green-500/20 text-green-400"
-                : "bg-red-500/20 text-red-400"
-            }`}
-          >
-            {trend === "up" ? "↗" : "↘"} {trendValue}
-          </div>
-        )}
-      </div>
-      <h3 className="text-gray-300 text-sm font-medium mb-2">{title}</h3>
-      <p className="text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors duration-300">
-        {value}
-      </p>
-    </div>
-  </div>
-);
-
-const Dashboard = () => {
-  const [mounted, setMounted] = useState(false);
-  const { cars, loading, error } = useLastService();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+      )
+    }
+    return null
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
-      {/* Blurred Background */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+    <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl font-bold text-white flex items-center">
+            <TrendingUp className="w-6 h-6 ml-2 text-emerald-400" />
+            حالة المركبات
+          </CardTitle>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant={chartType === "pie" ? "default" : "outline"}
+              onClick={() => setChartType("pie")}
+              className={
+                chartType === "pie"
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "border-gray-600 text-gray-300 hover:bg-gray-700"
+              }
+            >
+              دائري
+            </Button>
+            <Button
+              size="sm"
+              variant={chartType === "bar" ? "default" : "outline"}
+              onClick={() => setChartType("bar")}
+              className={
+                chartType === "bar"
+                  ? "bg-emerald-600 hover:bg-emerald-700"
+                  : "border-gray-600 text-gray-300 hover:bg-gray-700"
+              }
+            >
+              أعمدة
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            {chartType === "pie" ? (
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="count"
+                  label={({ status, count }) => `${status}: ${count}`}
+                  labelLine={false}
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend />
+              </PieChart>
+            ) : (
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <XAxis dataKey="status" tick={{ fill: "#9CA3AF" }} />
+                <YAxis tick={{ fill: "#9CA3AF" }} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Upcoming Maintenance Table Component
+function UpcomingMaintenanceTable({ data }: { data: UpcomingMaintenance[] }) {
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-500/20 text-red-400 border-red-500/30"
+      case "medium":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+      case "low":
+        return "bg-green-500/20 text-green-400 border-green-500/30"
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+    }
+  }
+
+  const getPriorityLabel = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "عالية"
+      case "medium":
+        return "متوسطة"
+      case "low":
+        return "منخفضة"
+      default:
+        return "غير محدد"
+    }
+  }
+
+  return (
+    <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold text-white flex items-center">
+          <Calendar className="w-6 h-6 ml-2 text-emerald-400" />
+          الصيانة القادمة
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-gray-600 hover:bg-gray-700/50">
+                <TableHead className="text-gray-300">اسم المركبة</TableHead>
+                <TableHead className="text-gray-300">رقم اللوحة</TableHead>
+                <TableHead className="text-gray-300">آخر صيانة</TableHead>
+                <TableHead className="text-gray-300">التذكير القادم</TableHead>
+                <TableHead className="text-gray-300">الأولوية</TableHead>
+                <TableHead className="text-gray-300">الإجراء</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((item) => (
+                <TableRow key={item.id} className="border-gray-600 hover:bg-gray-700/30">
+                  <TableCell className="text-white font-medium">{item.vehicleName}</TableCell>
+                  <TableCell className="text-gray-300 font-mono">{item.licensePlate}</TableCell>
+                  <TableCell className="text-gray-300">
+                    {new Date(item.lastServiceDate).toLocaleDateString("ar-SA")}
+                  </TableCell>
+                  <TableCell className="text-emerald-400 font-medium">
+                    {new Date(item.nextReminderDate).toLocaleDateString("ar-SA")}
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={`${getPriorityColor(item.priority)} border`}>
+                      {getPriorityLabel(item.priority)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
+                    >
+                      <Clock className="w-4 h-4 ml-1" />
+                      جدولة
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Recent Activity Component
+function RecentActivityList({ data }: { data: RecentActivity[] }) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-500/20 text-green-400 border-green-500/30"
+      case "scheduled":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+      case "cancelled":
+        return "bg-red-500/20 text-red-400 border-red-500/30"
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+    }
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "completed":
+        return "مكتملة"
+      case "scheduled":
+        return "مجدولة"
+      case "cancelled":
+        return "ملغية"
+      default:
+        return "غير محدد"
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "completed":
+        return CheckCircle
+      case "scheduled":
+        return Clock
+      case "cancelled":
+        return AlertTriangle
+      default:
+        return Activity
+    }
+  }
+
+  return (
+    <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold text-white flex items-center">
+          <Activity className="w-6 h-6 ml-2 text-emerald-400" />
+          النشاط الأخير
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {data.map((activity) => {
+            const StatusIcon = getStatusIcon(activity.status)
+            return (
+              <div
+                key={activity.id}
+                className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors duration-300"
+              >
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                    <StatusIcon className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">{activity.vehicleName}</p>
+                    <p className="text-gray-400 text-sm">{activity.maintenanceType}</p>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <p className="text-gray-300 text-sm mb-1">{new Date(activity.date).toLocaleDateString("ar-SA")}</p>
+                  <Badge className={`${getStatusColor(activity.status)} border text-xs`}>
+                    {getStatusLabel(activity.status)}
+                  </Badge>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// Quick Actions Component
+function QuickActions() {
+  return (
+    <>
+      {/* Desktop Quick Actions */}
+      <div className="hidden md:flex gap-4 mt-8">
+        <Button
+          size="lg"
+          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105"
+        >
+          <Plus className="w-5 h-5 ml-2" />
+          إضافة مركبة جديدة
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          className="border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-gray-900 transition-all duration-300 hover:scale-105 bg-transparent"
+        >
+          <Wrench className="w-5 h-5 ml-2" />
+          تسجيل صيانة
+        </Button>
       </div>
 
-      <div className="relative z-10 ">
-        {/* Navbar */}
-        <NavBar />
+      {/* Mobile Floating Action Buttons */}
+      <div className="md:hidden fixed bottom-6 left-6 z-50 flex flex-col gap-3">
+        <Button
+          size="lg"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-110"
+        >
+          <Plus className="w-6 h-6" />
+        </Button>
+        <Button
+          size="lg"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-110"
+        >
+          <Wrench className="w-6 h-6" />
+        </Button>
+      </div>
+    </>
+  )
+}
 
+// Main Dashboard Component
+export default function Dashboard() {
+  const { stats, chartData, upcomingMaintenance, recentActivity } = dashboardData
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <NavBar/>
         {/* Header */}
-        <div className="container mx-auto px-6 mt-40 mb-8 text-center">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4">
-            لوحة التحكم الرئيسية
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-2">
+            لوحة التحكم
           </h1>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            تتبع صيانة سياراتك بسهولة واحصل على تذكيرات ذكية لضمان الأداء الأمثل
-          </p>
+          <p className="text-gray-400">نظرة شاملة على حالة أسطولك وجدولة الصيانة</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="container px-6 mb-12 mx-auto">
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <StatCard
-              title="عدد السيارات"
-              value={cars.length}
-              icon="🚗"
-              trend="up"
-              trendValue={`+${cars.length}`}
-            />
-            <StatCard
-              title="آخر صيانة"
-              value={cars[0]?.lastServiceDate || "—"}
-              icon="🛠️"
-            />
-            <StatCard
-              title="الصيانات هذا الشهر"
-              value="3"
-              icon="📅"
-              trend="up"
-              trendValue="+2"
-            />
-            <StatCard title="متوسط الصيانة" value="كل 45 يوم" icon="⏱️" />
+        {/* Metrics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <MetricCard
+            title="إجمالي المركبات"
+            value={null}
+            icon={Car}
+            gradient="from-emerald-500 to-teal-600"
+          />
+          <MetricCard
+            title="الصيانة القادمة"
+            value={null}
+            icon={Calendar}
+            gradient="from-blue-500 to-cyan-600"
+          />
+          <MetricCard
+            title="الصيانة المتأخرة"
+            value={null}
+            icon={AlertTriangle}
+            gradient="from-red-500 to-pink-600"
+          />
+          <MetricCard
+            title="آخر مركبة مضافة"
+            value={null}
+            icon={Plus}
+            gradient="from-purple-500 to-indigo-600"
+          />
+        </div>
+
+        {/* Chart and Recent Activity */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2">
+            <MaintenanceChart data={chartData} />
+          </div>
+          <div>
+            <RecentActivityList data={recentActivity} />
           </div>
         </div>
 
-        {/* Cars Section */}
-        <div className="container gap-6 px-6 mb-12 mx-auto">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-white mb-2">سياراتي</h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-emerald-400 to-teal-400 rounded-full"></div>
-          </div>
-
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-1000 delay-300 ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            {loading ? (
-              <p className="text-white">جار التحميل...</p>
-            ) : error ? (
-              <p className="text-red-500">{error}</p>
-            ) : cars.length === 0 ? (
-              <p className="text-gray-300">لا توجد سجلات صيانة متاحة.</p>
-            ) : (
-              cars.map((car, i) => <CarCard key={i} {...car} />)
-            )}
-          </div>
+        {/* Upcoming Maintenance Table */}
+        <div className="mb-8">
+          <UpcomingMaintenanceTable data={upcomingMaintenance} />
         </div>
 
-        <div className="fixed bottom-8 right-8 group">
-          <button className="relative bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white p-4 rounded-full shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-110 group">
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full blur opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-            <div className="relative flex items-center justify-center">
-              <span className="text-2xl">➕</span>
-            </div>
-          </button>
-          <div className="absolute bottom-full right-0 mb-2 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-            صيانة جديدة
-          </div>
-        </div>
+        {/* Quick Actions */}
+        <QuickActions />
       </div>
     </div>
-  );
-};
-
-export default Dashboard;
+  )
+}

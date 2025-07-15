@@ -5,6 +5,7 @@ import RegisterPage from "../Features/Auth/Pages/RegisterPage";
 import Dashboard from "../Features/Dashboard/Pages/Dashboard";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../app/AuthContext";
+import Vhehicles from "../Features/Vehicles/Page/Vhehicles";
 function App() {
   const { isLoggedIn } = useAuth();
 
@@ -23,6 +24,12 @@ function App() {
           path="/dashboard"
           element={
             isLoggedIn ? <Dashboard /> : <Navigate to="/login" replace />
+          }
+        />
+               <Route
+          path="/my-vehicles"
+          element={
+            isLoggedIn ? <Vhehicles /> : <Navigate to="/login" replace />
           }
         />
       </Routes>

@@ -1,4 +1,4 @@
-import { axiosWithAuth } from "../../Service/axiosInstance.ts";
+import { axiosWithAuth } from "../../Service/axiosInstance";
 
 
 export const last_service = () =>

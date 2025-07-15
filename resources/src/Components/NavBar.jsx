@@ -10,7 +10,10 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 shadow-lg px-10 py-4 fixed top-0 left-0 w-full z-50 " dir="rtl">
+    <nav
+      className="bg-gray-900 shadow-lg px-10 py-4 fixed top-0 left-0 w-full z-50 "
+      dir="rtl"
+    >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <h1 className="text-3xl font-extrabold text-emerald-400 tracking-wide select-none">
@@ -59,7 +62,18 @@ const NavBar = () => {
         ) : (
           <ul className="flex gap-10 text-gray-300 font-medium items-center">
             <li>
-              <Link to="/dashboard" className="hover:text-emerald-400 transition">
+              <Link
+                to="/my-vehicles"
+                className="hover:text-emerald-400 transition"
+              >
+                مركباتي 
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard"
+                className="hover:text-emerald-400 transition"
+              >
                 لوحة التحكم
               </Link>
             </li>

@@ -1,3 +1,5 @@
+import React from "react";
+
 // components/StatCard.tsx
 type StatCardProps = {
   title: string;
