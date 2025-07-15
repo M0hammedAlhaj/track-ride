@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { MetricCard } from "../Components/MetricCard"
-
+import { useCountVehicles } from "../hooks/useCountVehicles"
 import {
   PieChart,
   Pie,
@@ -449,7 +449,7 @@ function QuickActions() {
 // Main Dashboard Component
 export default function Dashboard() {
   const { stats, chartData, upcomingMaintenance, recentActivity } = dashboardData
-
+  const {count,loading,error  } = useCountVehicles()
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -466,7 +466,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <MetricCard
             title="إجمالي المركبات"
-            value={null}
+            value={loading ? "..." : error ? "خطأ" : count}
             icon={Car}
             gradient="from-emerald-500 to-teal-600"
           />

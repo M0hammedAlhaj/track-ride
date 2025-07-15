@@ -34,4 +34,6 @@ export interface Vehicle {
   model: string;
   licensePlate: string;
   lastService: string | null;
+  year?: string | number;
+  color?: string;
 }
