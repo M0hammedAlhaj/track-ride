@@ -71,7 +71,7 @@ public class JpaVehicleRepository implements VehicleRepository {
     @Override
     @Transactional(readOnly = true)
     public Long countVehiclesByOwnerId(UUID ownerId) {
-        return em.createQuery("SELECT COUNT(v) FROM Vehicle v WHERE v.owner =:ownerId"
+        return em.createQuery("SELECT COUNT(v) FROM Vehicle v WHERE v.owner.id =:ownerId"
                         , Long.class)
                 .setParameter("ownerId", ownerId)
                 .getSingleResult();
