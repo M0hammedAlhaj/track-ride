@@ -22,14 +22,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
-                .cors()
-                .and()
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/users/assign-vehicle").authenticated()
                         .requestMatchers("/api/v1/users/assign-maintenance").authenticated()
                         .requestMatchers("/api/v1/users/vehicles").authenticated()
                         .requestMatchers("/api/v1/users/last-Maintenance").authenticated()
+                        .requestMatchers("/api/v1/users/count-vehicles").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
