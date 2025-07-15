@@ -15,7 +15,7 @@ export function useLogin() {
       const res = await loginApi(payload);
       setToken(res.data.token); 
     } catch (e: any) {
-      setError("حدث خطأ أثناء تسجيل الدخول");
+      setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
       throw e;
     } finally {
       setLoading(false);

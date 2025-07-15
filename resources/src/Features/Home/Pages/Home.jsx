@@ -3,12 +3,14 @@ import Hero from "../Components/Hero";
 
 import NavBar from "../../../Components/NavBar";
 import FeaturesSection from "../Components/FeaturesSection";
+import Footer from "../../../Components/Footer";
 const Home = () => {
   return (
-    <div className="bg-gray-50 min-h-screen flex flex-col gap-10">
+    <div className="">
       <NavBar />
       <Hero />
       <FeaturesSection />
+      <Footer/>
     </div>
   );
 };
