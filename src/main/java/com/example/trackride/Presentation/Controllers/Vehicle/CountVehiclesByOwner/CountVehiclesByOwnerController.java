@@ -1,8 +1,8 @@
-package com.example.trackride.Presentation.Controllers.User.GetVehicleCount;
+package com.example.trackride.Presentation.Controllers.Vehicle.CountVehiclesByOwner;
 
 import com.example.trackride.Application.Vehicle.UseCase.CountVehiclesByOwnerUseCase;
 import com.example.trackride.Infrastructures.Security.Auth.UserAuthentication;
-import com.example.trackride.Presentation.Controllers.User.UserBaseController;
+import com.example.trackride.Presentation.Controllers.Vehicle.VehicleBaseController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(UserBaseController.USER_API_BASE)
+@RequestMapping(VehicleBaseController.VEHICLE_BASE_API)
 @RequiredArgsConstructor
-public class GetVehicleCountController {
+public class CountVehiclesByOwnerController {
+
     private final CountVehiclesByOwnerUseCase countVehiclesByOwnerUseCase;
 
     @GetMapping("/count-vehicles")
     public ResponseEntity<?> invoke(@AuthenticationPrincipal UserAuthentication authentication) {
-        return GetVehicleCountResponse.success(countVehiclesByOwnerUseCase.execute(authentication.getId()));
+        return CountVehiclesByOwnerResponse.success(countVehiclesByOwnerUseCase.execute(authentication.getId()));
     }
 }

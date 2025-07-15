@@ -10,7 +10,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FetchUpcomingMaintenanceRecordsUseCase {
-
     private final MaintenanceRecordRepository maintenanceRecordRepository;
 
     public LocalDate execute(String userId) {
