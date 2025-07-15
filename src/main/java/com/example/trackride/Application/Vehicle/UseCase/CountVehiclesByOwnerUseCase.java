@@ -1,4 +1,4 @@
-package com.example.trackride.Application.User.UseCase;
+package com.example.trackride.Application.Vehicle.UseCase;
 
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
