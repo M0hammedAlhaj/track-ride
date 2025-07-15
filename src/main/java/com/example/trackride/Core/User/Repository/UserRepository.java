@@ -12,4 +12,6 @@ public interface UserRepository extends BaseRepository<User> {
     User findByEmailOrThrow(String email);
 
     Optional<User> findUserByIdWithVehicles(UUID userId);
+
+
 }
