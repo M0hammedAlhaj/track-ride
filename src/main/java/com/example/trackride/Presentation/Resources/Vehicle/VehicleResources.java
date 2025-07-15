@@ -13,10 +13,16 @@ public class VehicleResources {
 
     private String color;
 
+    private String year;
+
+    private String name;
+
     public VehicleResources(Vehicle vehicle) {
         this.license = vehicle.getLicense();
         this.model = vehicle.getModel();
         this.color = vehicle.getColor();
         this.id = vehicle.getId().toString();
+        this.year = vehicle.getYear().toString();
+        this.name = vehicle.getName();
     }
 }

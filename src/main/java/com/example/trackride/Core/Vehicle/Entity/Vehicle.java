@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Year;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,11 +20,16 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vehicle extends BaseEntity {
+
     private String license;
 
     private String model;
 
     private String color;
+
+    private String name;
+
+    private Year year;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")

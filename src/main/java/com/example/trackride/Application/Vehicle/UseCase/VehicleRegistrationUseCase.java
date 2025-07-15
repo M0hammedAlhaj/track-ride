@@ -19,7 +19,7 @@ public class VehicleRegistrationUseCase {
             throw new DuplicateResourceException("Vehicle with license '" + dto.license() + "' already exists.");
         }
 
-        Vehicle vehicle = factory.create(dto.license(), dto.model(), dto.color());
+        Vehicle vehicle = factory.create(dto.license(), dto.model(), dto.color(),dto.year(),dto.name());
         vehicleRepository.save(vehicle);
         return vehicle;
     }

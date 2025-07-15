@@ -12,12 +12,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -40,9 +39,10 @@ class UserAssignVehicleUseCaseTest {
         String license = "license";
         String model = "model";
         String color = "color";
-
+        String year = "2012";
+        String name = "name";
         UserAssignVehicleDTO userAssignVehicleDTO =
-                new UserAssignVehicleDTO(id.toString(), license, model, color);
+                new UserAssignVehicleDTO(id.toString(), license, model, color, year, name);
 
         User user = new User();
         user.setId(id);
@@ -74,10 +74,11 @@ class UserAssignVehicleUseCaseTest {
         String license = "ABC123";
         String model = "Tesla";
         String color = "Black";
+        String year = "2012";
+        String name = "name";
 
         UserAssignVehicleDTO dto = new UserAssignVehicleDTO(
-                id.toString(), license, model, color
-        );
+                id.toString(), license, model, color, year, name);
 
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 

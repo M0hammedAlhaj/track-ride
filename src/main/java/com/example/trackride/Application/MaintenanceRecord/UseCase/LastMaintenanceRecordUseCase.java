@@ -29,7 +29,12 @@ public class LastMaintenanceRecordUseCase {
                 .forEach(vehicle -> {
                     MaintenanceRecord record = vehicleRepository.findById(vehicle.getId())
                             .flatMap(v -> maintenanceRecordRepository.findLastMaintenanceRecordByVehicleId(v.getId()))
-                            .orElse(null);
+                            .orElseGet(() -> {
+                                MaintenanceRecord mr = new MaintenanceRecord();
+                                mr.assignVehicle(vehicle);
+                                return mr;
+                            });
+
                     maintenanceRecords.add(record);
                 });
 

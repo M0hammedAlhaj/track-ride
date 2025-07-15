@@ -34,7 +34,9 @@ class VehicleRegistrationUseCaseTest {
         String license = "ABC123";
         String model = "Tesla";
         String color = "Black";
-        VehicleRegistrationDTO dto = new VehicleRegistrationDTO(license, model, color);
+        String year = "1990";
+        String name = "U2";
+        VehicleRegistrationDTO dto = new VehicleRegistrationDTO(license, model, color, year, name);
 
         Vehicle expectedVehicle = Vehicle.builder()
                 .license(license)
@@ -44,13 +46,13 @@ class VehicleRegistrationUseCaseTest {
         expectedVehicle.setId(UUID.randomUUID());
 
         when(vehicleRepository.vehicleExistByLicense(license)).thenReturn(false);
-        when(vehicleFactory.create(license, model, color)).thenReturn(expectedVehicle);
+        when(vehicleFactory.create(license, model, color, year, name)).thenReturn(expectedVehicle);
 
         Vehicle registeredVehicle = underTest.execute(dto);
 
         assertThat(registeredVehicle).isEqualTo(expectedVehicle);
         verify(vehicleRepository).vehicleExistByLicense(license);
-        verify(vehicleFactory).create(license, model, color);
+        verify(vehicleFactory).create(license, model, color, year, name);
         verify(vehicleRepository).save(expectedVehicle);
     }
 
@@ -59,8 +61,9 @@ class VehicleRegistrationUseCaseTest {
         String license = "DUPLICATE123";
         String model = "BMW";
         String color = "Red";
-
-        VehicleRegistrationDTO dto = new VehicleRegistrationDTO(license, model, color);
+        String year = "1990";
+        String name = "e200";
+        VehicleRegistrationDTO dto = new VehicleRegistrationDTO(license, model, color,year, name);
 
         when(vehicleRepository.vehicleExistByLicense(license)).thenReturn(true);
 
@@ -68,7 +71,7 @@ class VehicleRegistrationUseCaseTest {
                 .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("Vehicle with license '" + license + "' already exists.");
 
-        verify(vehicleFactory, never()).create(any(), any(), any());
+        verify(vehicleFactory, never()).create(any(), any(), any(),any(),any());
         verify(vehicleRepository, never()).save(any());
     }
 }

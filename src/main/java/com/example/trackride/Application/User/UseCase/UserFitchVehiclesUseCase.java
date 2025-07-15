@@ -23,6 +23,7 @@ public class UserFitchVehiclesUseCase {
         if (userRepository.findById(ownerId).isEmpty()) {
             throw new ResourceNotFoundException(dto.userID());
         }
+
         return vehicleRepository.findVehiclesByOwnerId(ownerId);
     }
 }

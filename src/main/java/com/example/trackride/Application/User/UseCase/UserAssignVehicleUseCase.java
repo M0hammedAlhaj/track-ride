@@ -26,7 +26,9 @@ public class UserAssignVehicleUseCase {
 
         Vehicle vehicle = vehicleRegistration.execute(new VehicleRegistrationDTO(dto.license(),
                 dto.model(),
-                dto.color()));
+                dto.color(),
+                dto.year(),
+                dto.name()));
 
         user.assignVehicle(vehicle);
         userRepository.update(user);
