@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,11 +43,20 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<MaintenanceRecord> findLastMaintenanceRecordByVehicleId(UUID vehicleId) {
         return em.createQuery("SELECT m FROM MaintenanceRecord m " +
                         "WHERE m.vehicle.id =:vehicleId " +
                         "ORDER BY m.createdAt desc ", MaintenanceRecord.class)
                 .setParameter("vehicleId", vehicleId)
+                .getResultList().stream().findFirst();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<LocalDate> findFirstUpcomingMaintenanceByOwnerId(UUID ownerId) {
+        return em.createQuery("SELECT m.reminder FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId order by m.reminder asc", LocalDate.class)
+                .setParameter("ownerId", ownerId)
                 .getResultList().stream().findFirst();
     }
 }

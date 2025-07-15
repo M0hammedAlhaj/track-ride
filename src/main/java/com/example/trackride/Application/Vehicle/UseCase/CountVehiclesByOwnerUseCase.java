@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserGetVehicleCountUseCase {
+public class CountVehiclesByOwnerUseCase {
     private final VehicleRepository vehicleRepository;
 
     public Long execute(String userId) {
