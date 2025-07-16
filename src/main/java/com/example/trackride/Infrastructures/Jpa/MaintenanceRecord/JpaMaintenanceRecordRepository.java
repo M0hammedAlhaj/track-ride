@@ -54,9 +54,11 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<LocalDate> findFirstUpcomingMaintenanceByOwnerId(UUID ownerId) {
-        return em.createQuery("SELECT m.reminder FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId order by m.reminder asc", LocalDate.class)
+    public Long findFirstUpcomingMaintenanceByOwnerId(UUID ownerId) {
+        return em.createQuery("SELECT COUNT(m) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId AND m.reminder>: now", Long.class)
                 .setParameter("ownerId", ownerId)
-                .getResultList().stream().findFirst();
+                .setParameter("now", LocalDate.now())
+                .getSingleResult();
+
     }
 }

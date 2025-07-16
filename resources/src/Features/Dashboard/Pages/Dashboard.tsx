@@ -473,7 +473,7 @@ export default function Dashboard() {
           />
           <MetricCard
             title="الصيانة القادمة"
-            value={upcomingLoading ? "..." : upcomingError ? "خطأ" : upcomingDate ==null? "لا توجد صيانة قادمة" : upcomingDate}
+            value={upcomingLoading ? "..." : upcomingError ? "خطأ" : upcomingDate ==null? 0 : upcomingDate}
             icon={Calendar}
             gradient="from-blue-500 to-cyan-600"
           />

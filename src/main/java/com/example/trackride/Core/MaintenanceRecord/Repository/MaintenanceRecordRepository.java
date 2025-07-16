@@ -3,7 +3,6 @@ package com.example.trackride.Core.MaintenanceRecord.Repository;
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.Shared.Base.BaseRepository;
 
-import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,5 +10,5 @@ public interface MaintenanceRecordRepository extends BaseRepository<MaintenanceR
 
     Optional<MaintenanceRecord> findLastMaintenanceRecordByVehicleId(UUID vehicleId);
 
-    Optional<LocalDate> findFirstUpcomingMaintenanceByOwnerId(UUID ownerId);
+    Long findFirstUpcomingMaintenanceByOwnerId(UUID ownerId);
 }

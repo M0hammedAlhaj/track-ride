@@ -4,7 +4,6 @@ import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecord
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -12,8 +11,7 @@ import java.util.UUID;
 public class FetchUpcomingMaintenanceRecordUseCase {
     private final MaintenanceRecordRepository maintenanceRecordRepository;
 
-    public LocalDate execute(String userId) {
-        return maintenanceRecordRepository.findFirstUpcomingMaintenanceByOwnerId(UUID.fromString(userId))
-                .orElse(null);
+    public Long execute(String userId) {
+        return maintenanceRecordRepository.findFirstUpcomingMaintenanceByOwnerId(UUID.fromString(userId));
     }
 }
