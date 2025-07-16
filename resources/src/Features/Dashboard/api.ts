@@ -6,3 +6,6 @@ export const last_service = () =>
     
 export const count_vehicles = () =>
     axiosWithAuth.get("/vehicles/count-vehicles");
+
+export const upconing_maintenance = () =>
+    axiosWithAuth.get("/maintenance-records/up-coming");

@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/users/vehicles").authenticated()
                         .requestMatchers("/api/v1/users/last-Maintenance").authenticated()
                         .requestMatchers("/api/v1/vehicles/*").authenticated()
+                        .requestMatchers("/api/v1/maintenance-records/*").authenticated()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

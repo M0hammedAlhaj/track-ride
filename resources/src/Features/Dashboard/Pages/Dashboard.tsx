@@ -23,7 +23,7 @@ import {
 import { Car, Calendar, AlertTriangle, Plus, Clock, TrendingUp, Wrench, CheckCircle, Activity } from "lucide-react"
 import React from "react"
 import NavBar from "../../../Components/NavBar"
-
+import { useFetchUpcoming } from "../hooks/useFetchUpcoming"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -450,6 +450,7 @@ function QuickActions() {
 export default function Dashboard() {
   const { stats, chartData, upcomingMaintenance, recentActivity } = dashboardData
   const {count,loading,error  } = useCountVehicles()
+  const { upcomingDate, loading: upcomingLoading, error: upcomingError } =useFetchUpcoming()
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -472,7 +473,7 @@ export default function Dashboard() {
           />
           <MetricCard
             title="الصيانة القادمة"
-            value={null}
+            value={upcomingLoading ? "..." : upcomingError ? "خطأ" : upcomingDate ==null? "لا توجد صيانة قادمة" : upcomingDate}
             icon={Calendar}
             gradient="from-blue-500 to-cyan-600"
           />
