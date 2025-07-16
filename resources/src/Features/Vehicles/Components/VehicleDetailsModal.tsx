@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Car, Wrench, Plus } from "lucide-react";
-import { Vehicle } from "../types";
+import { Vehicle } from "../../../types";
 import React from "react";
 
 interface MaintenanceRecord {

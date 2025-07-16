@@ -4,7 +4,7 @@ import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, Eye, Edit, Trash2 } from "lucide-react";
-import { Vehicle } from "../types";
+import { Vehicle } from "../../../types";
 
 interface VehicleCardProps {
   vehicle: Vehicle;

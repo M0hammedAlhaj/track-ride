@@ -76,4 +76,12 @@ public class JpaVehicleRepository implements VehicleRepository {
                 .setParameter("ownerId", ownerId)
                 .getSingleResult();
     }
+
+    @Override
+    public Optional<Vehicle> findMostRecentVehicleByOwnerId(UUID ownerId) {
+        return em.createQuery("SELECT v FROM Vehicle v WHERE v.owner.id =:ownerId order by v.createdAt desc "
+                ,Vehicle.class)
+                .setParameter("ownerId", ownerId)
+                .getResultList().stream().findFirst();
+    }
 }

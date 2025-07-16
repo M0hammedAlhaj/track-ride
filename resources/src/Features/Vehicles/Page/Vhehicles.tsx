@@ -11,10 +11,10 @@ import VehicleDetailsModal from "../Components/VehicleDetailsModal";
 import VehicleHeader from "../Components/VehicleHeader";
 
 import { useVehicles } from "../hooks/useVehicles";
-import type { Vehicle, MaintenanceRecord } from "../types";
+import type { Vehicle, MaintenanceRecord } from "../../../types";
 
 export default function Vehicles() {
-  const { vehicles: apiVehicles, loading, error, refetch } = useVehicles();
+  const { vehicles: apiVehicles, loading, error } = useVehicles();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -134,7 +134,6 @@ export default function Vehicles() {
         vehicle={selectedVehicle}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onVehicleAdded={refetch} // call refetch when a new vehicle is added
       />
     </div>
   );
