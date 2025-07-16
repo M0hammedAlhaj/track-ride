@@ -1,3 +1,7 @@
+/home/sa/track-ride/src/test/java/com/example/trackride/Application/User/MaintenanceRecord/UseCase/MaintenanceRegistrationUseCaseTest.java
+/home/sa/track-ride/src/test/java/com/example/trackride/Application/User/UseCase/UserAssignVehicleUseCaseTest.java
+/home/sa/track-ride/src/test/java/com/example/trackride/Application/User/UseCase/UserLoginUseCaseTest.java
 /home/sa/track-ride/src/test/java/com/example/trackride/Application/User/UseCase/UserRegistrationUseCaseTest.java
+/home/sa/track-ride/src/test/java/com/example/trackride/Application/Vehicle/UseCase/VehicleRegistrationUseCaseTest.java
 /home/sa/track-ride/src/test/java/com/example/trackride/Infrastructures/Jwt/JwtGenerationTest.java
 /home/sa/track-ride/src/test/java/com/example/trackride/TrackRideApplicationTests.java

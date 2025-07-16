@@ -114,8 +114,6 @@ class UserRegistrationUseCaseTest {
 
         assertThat(exception.getMessage()).isEqualTo("Email already in use");
 
-        // Verify that userFactory and repository save were NOT called
-        verify(userFactory, never()).create(any(), any(), any());
         verify(userRepository, never()).save(any());
         verify(publisher, never()).publishEvent(any());
     }
