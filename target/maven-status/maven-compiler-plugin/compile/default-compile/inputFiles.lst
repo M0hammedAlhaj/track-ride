@@ -75,6 +75,7 @@
 /app/src/main/java/com/example/trackride/Presentation/Controllers/User/Register/RegistrationRequest.java
 /app/src/main/java/com/example/trackride/Presentation/Controllers/User/Register/RegistrationResponse.java
 /app/src/main/java/com/example/trackride/Presentation/Controllers/User/UserBaseController.java
+/app/src/main/java/com/example/trackride/Presentation/Controllers/User/UserExceptionHandler.java
 /app/src/main/java/com/example/trackride/Presentation/Controllers/Vehicle/CountVehiclesByOwner/CountVehiclesByOwnerController.java
 /app/src/main/java/com/example/trackride/Presentation/Controllers/Vehicle/CountVehiclesByOwner/CountVehiclesByOwnerResponse.java
 /app/src/main/java/com/example/trackride/Presentation/Controllers/Vehicle/GetMostRecentVehicleByOwner/GetMostRecentVehicleByOwnerController.java
