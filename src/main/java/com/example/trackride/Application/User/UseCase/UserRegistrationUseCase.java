@@ -23,7 +23,7 @@ public class UserRegistrationUseCase {
                 dto.password(),
                 dto.name());
 
-        if (userRepository.findByEmail(dto.email()).isPresent()) {
+        if (userRepository.existByEmail(dto.email())) {
             throw new UserAccessException("Email already in use");
         }
 

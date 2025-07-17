@@ -13,20 +13,20 @@ services:
       - ./db-init:/docker-entrypoint-initdb.d
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile-backend
-    container_name: track-ride-app
-    depends_on:
-      - db
+    image: maven:3.9.6-eclipse-temurin-21
+    container_name: track-ride-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.devtools.restart.enabled=true"
     ports:
       - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/trackride
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
-      SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA: trackride
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
 
   frontend:
     build:
