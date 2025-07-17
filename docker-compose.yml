@@ -34,7 +34,7 @@ services:
       dockerfile: Dockerfile-frontend
     container_name: track-ride-frontend
     ports:
-      - "3000:80"
+      - "5173:80"
     depends_on:
       - backend
 
