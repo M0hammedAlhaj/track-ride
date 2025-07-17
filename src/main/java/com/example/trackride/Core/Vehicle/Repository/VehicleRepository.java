@@ -12,7 +12,7 @@ public interface VehicleRepository extends BaseRepository<Vehicle> {
 
     Set<Vehicle> findVehiclesByOwnerId(UUID ownerId);
 
-    Vehicle findVehicleByIdWithMaintenanceRecord(UUID vehicleId);
+    Vehicle findVehicleWithMaintenanceRecordById(UUID vehicleId);
 
     Long countVehiclesByOwnerId(UUID ownerId);
 
