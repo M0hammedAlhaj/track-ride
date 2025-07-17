@@ -1,7 +1,0 @@
-/app/src/test/java/com/example/trackride/Application/User/MaintenanceRecord/UseCase/MaintenanceRegistrationUseCaseTest.java
-/app/src/test/java/com/example/trackride/Application/User/UseCase/UserAssignVehicleUseCaseTest.java
-/app/src/test/java/com/example/trackride/Application/User/UseCase/UserLoginUseCaseTest.java
-/app/src/test/java/com/example/trackride/Application/User/UseCase/UserRegistrationUseCaseTest.java
-/app/src/test/java/com/example/trackride/Application/Vehicle/UseCase/VehicleRegistrationUseCaseTest.java
-/app/src/test/java/com/example/trackride/Infrastructures/Jwt/JwtGenerationTest.java
-/app/src/test/java/com/example/trackride/TrackRideApplicationTests.java

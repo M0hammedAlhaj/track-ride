@@ -1,7 +1,0 @@
-com/example/trackride/Application/User/UseCase/UserLoginUseCaseTest.class
-com/example/trackride/Infrastructures/Jwt/JwtGenerationTest.class
-com/example/trackride/Application/User/UseCase/UserAssignVehicleUseCaseTest.class
-com/example/trackride/Application/User/MaintenanceRecord/UseCase/MaintenanceRegistrationUseCaseTest.class
-com/example/trackride/Application/Vehicle/UseCase/VehicleRegistrationUseCaseTest.class
-com/example/trackride/TrackRideApplicationTests.class
-com/example/trackride/Application/User/UseCase/UserRegistrationUseCaseTest.class
