@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class getVehicleWithMaintenanceByIdUseCase {
+public class GetVehicleWithMaintenanceByIdUseCase {
     private final VehicleRepository vehicleRepository;
 
     public Vehicle execute(UUID vehicleId) {
