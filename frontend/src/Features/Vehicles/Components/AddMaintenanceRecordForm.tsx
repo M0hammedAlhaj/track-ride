@@ -22,6 +22,7 @@ interface AddMaintenanceRecordFormProps {
 
 export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaintenanceRecordFormProps) {
   const [open, setOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { maintenanceTypes, loading: typesLoading, error: typesError } = useMaintenanceTypes()
   
   // Helper function to get maintenance type by key
@@ -59,18 +60,26 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
-    setOpen(false)
-    // Reset form
-    setFormData({
-      type: '',
-      description: '',
-      price: 0.01, // Reset to minimum valid price
-      reminderDate: getDefaultReminderDate(),
-      useCustomReminder: false
-    })
+    setIsSubmitting(true)
+    
+    try {
+      await onSubmit(formData)
+      setOpen(false)
+      // Reset form
+      setFormData({
+        type: '',
+        description: '',
+        price: 0.01, // Reset to minimum valid price
+        reminderDate: getDefaultReminderDate(),
+        useCustomReminder: false
+      })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -249,14 +258,23 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
             <Button
               type="submit"
               className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
+              disabled={isSubmitting}
             >
-              إضافة السجل
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  جاري الحفظ...
+                </>
+              ) : (
+                'إضافة السجل'
+              )}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
               className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+              disabled={isSubmitting}
             >
               إلغاء
             </Button>

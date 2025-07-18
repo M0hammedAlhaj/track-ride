@@ -16,7 +16,7 @@ public class MaintenanceRecordResources {
 
     private final String vehicleId;
 
-    private final String description;
+    private final String description;آ
 
     private final BigDecimal price;
 

@@ -36,7 +36,6 @@ export default function VehicleDetails() {
       const serviceTypeName = serviceType?.arabicName || data.type
       
       const reminderType = data.useCustomReminder ? 'مخصص' : 'تلقائي'
-      alert(`تم إضافة سجل الصيانة بنجاح!\nنوع الخدمة: ${serviceTypeName}\nالسعر: ${data.price} دينار أردني\nنوع التذكير: ${reminderType}\nتاريخ التذكير: ${data.reminderDate || 'تلقائي'}`)
       
       // Refresh the vehicle data to show the new maintenance record
       await refetch()
@@ -44,16 +43,19 @@ export default function VehicleDetails() {
     } catch (error: any) {
       console.error('Error adding maintenance record:', error)
       
-      // Handle different error types
+      // Handle different error types with better UX
+      let errorMessage = 'حدث خطأ أثناء إضافة سجل الصيانة. يرجى المحاولة مرة أخرى.'
+      
       if (error.response?.status === 400) {
-        alert('خطأ في البيانات المدخلة. يرجى التحقق من جميع الحقول.')
+        errorMessage = 'خطأ في البيانات المدخلة. يرجى التحقق من جميع الحقول.'
       } else if (error.response?.status === 401) {
-        alert('انتهت صلاحية جلسة العمل. يرجى تسجيل الدخول مرة أخرى.')
+        errorMessage = 'انتهت صلاحية جلسة العمل. يرجى تسجيل الدخول مرة أخرى.'
       } else if (error.response?.status === 403) {
-        alert('غير مصرح لك بإضافة سجلات الصيانة.')
-      } else {
-        alert('حدث خطأ أثناء إضافة سجل الصيانة. يرجى المحاولة مرة أخرى.')
+        errorMessage = 'غير مصرح لك بإضافة سجلات الصيانة.'
       }
+      
+      // You can implement a toast notification here instead of alert
+      console.error('Maintenance record error:', errorMessage)
     }
   }
 

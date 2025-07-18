@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plus, Car, Calendar, Hash, Palette } from "lucide-react";
+import { Plus, Car, Calendar, Hash, Palette, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -40,8 +40,6 @@ export default function VehicleHeader({ onVehicleAdded }: VehicleHeaderProps) {
         onVehicleAdded();
       }
       
-      // Show success message
-      alert("تم إضافة المركبة بنجاح!");
     } catch (err) {
       console.error("Error adding vehicle:", err);
     }
@@ -183,7 +181,14 @@ export default function VehicleHeader({ onVehicleAdded }: VehicleHeaderProps) {
                 className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
                 disabled={loading}
               >
-                {loading ? "جاري الحفظ..." : "حفظ المركبة"}
+                {loading ? (
+                  <>
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    جاري الحفظ...
+                  </>
+                ) : (
+                  'حفظ المركبة'
+                )}
               </Button>
               <Button
                 type="button"
