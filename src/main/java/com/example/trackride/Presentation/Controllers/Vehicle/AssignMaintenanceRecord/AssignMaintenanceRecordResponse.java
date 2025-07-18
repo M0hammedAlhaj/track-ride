@@ -1,4 +1,4 @@
-package com.example.trackride.Presentation.Controllers.User.AssignMaintenanceRecord;
+package com.example.trackride.Presentation.Controllers.Vehicle.AssignMaintenanceRecord;
 
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Presentation.Resources.MaintenanceRecord.MaintenanceRecordResources;

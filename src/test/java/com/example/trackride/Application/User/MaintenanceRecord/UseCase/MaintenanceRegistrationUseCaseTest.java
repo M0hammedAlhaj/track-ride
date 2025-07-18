@@ -19,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,16 +49,24 @@ class MaintenanceRegistrationUseCaseTest {
         UUID userId = UUID.randomUUID();
         UUID vehicleId = UUID.randomUUID();
         MaintenanceType type = MaintenanceType.TIRE_ROTATION;
+        String description = "description";
+        LocalDate reminder = LocalDate.now().plusDays(30);
+        BigDecimal price = BigDecimal.valueOf(30);
 
         MaintenanceRecordRegistrationDTO dto = new MaintenanceRecordRegistrationDTO(
-                vehicleId.toString(), type, userId.toString()
+                vehicleId.toString(),
+                type,
+                description,
+                price,
+                reminder,
+                userId.toString()
         );
 
         MaintenanceRecord maintenanceRecord = Mockito.mock(MaintenanceRecord.class);
         User user = new User();
         Vehicle vehicle = Mockito.mock(Vehicle.class);
 
-        when(factory.create(type)).thenReturn(maintenanceRecord);
+        when(factory.create(type, reminder, description, price)).thenReturn(maintenanceRecord);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
         when(vehicle.belongsTo(user)).thenReturn(true);
@@ -73,12 +83,23 @@ class MaintenanceRegistrationUseCaseTest {
     public void user_should_register_maintenance_record_throw_exception_() {
         UUID userId = UUID.randomUUID();
         UUID vehicleId = UUID.randomUUID();
-        MaintenanceType type = MaintenanceType.OIL_CHANGE;
+        MaintenanceType type = MaintenanceType.TIRE_ROTATION;
+        String description = "description";
+        LocalDate reminder = LocalDate.now().plusDays(30);
+        BigDecimal price = BigDecimal.valueOf(30);
+
+        MaintenanceRecordRegistrationDTO dto = new MaintenanceRecordRegistrationDTO(
+                vehicleId.toString(),
+                type,
+                description,
+                price,
+                reminder,
+                userId.toString()
+        );
 
         Vehicle vehicle = Mockito.mock(Vehicle.class);
         User user = new User();
-        MaintenanceRecordRegistrationDTO dto = new MaintenanceRecordRegistrationDTO(vehicleId.toString(), type, userId.toString());
-        when(factory.create(type)).thenReturn(new MaintenanceRecord());
+        when(factory.create(type, reminder, description, price)).thenReturn(new MaintenanceRecord());
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(vehicleRepository.findById(vehicleId)).thenReturn(Optional.of(vehicle));
         when(vehicle.belongsTo(user)).thenReturn(false);

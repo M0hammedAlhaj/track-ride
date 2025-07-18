@@ -27,7 +27,11 @@ public class MaintenanceRegistrationUseCase {
     private final UserRepository userRepository;
 
     public MaintenanceRecord execute(MaintenanceRecordRegistrationDTO registrationDTO) {
-        MaintenanceRecord maintenanceRecord = factory.create(registrationDTO.maintenanceType());
+        MaintenanceRecord maintenanceRecord = factory.create(registrationDTO.maintenanceType(),
+                registrationDTO.reminder(),
+                registrationDTO.description(),
+                registrationDTO.price());
+
         User user = userRepository.findById(UUID.fromString(registrationDTO.userId()))
                 .orElseThrow(() -> new ResourceNotFoundException(registrationDTO.userId()));
 
