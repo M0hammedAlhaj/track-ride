@@ -15,10 +15,4 @@ public enum MaintenanceType {
         this.arabicName = arabicName;
     }
 
-    @Override
-    public String toString() {
-        return "MaintenanceType{" +
-                "arabicName='" + arabicName + '\'' +
-                '}';
-    }
 }

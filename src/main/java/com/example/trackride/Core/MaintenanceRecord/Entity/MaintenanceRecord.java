@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Table(name = "maintenance_records")
@@ -28,6 +29,10 @@ public class MaintenanceRecord extends BaseEntity {
     private MaintenanceType type;
 
     private LocalDate reminder;
+
+    private BigDecimal price;
+
+    private String description;
 
     public void assignVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;

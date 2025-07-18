@@ -1,6 +1,7 @@
 export { default as VehicleDetailsHeader } from './VehicleDetailsHeader'
 export { default as VehicleInfoCard } from './VehicleInfoCard'
 export { default as MaintenanceRecordsCard } from './MaintenanceRecordsCard'
+export { default as AddMaintenanceRecordForm } from './AddMaintenanceRecordForm'
 export { LoadingState, ErrorState } from './VehicleStates'
 export { default as VehicleHeader } from './VehicleHeader'
 export { default as VehicleCard } from './VehicleCard'

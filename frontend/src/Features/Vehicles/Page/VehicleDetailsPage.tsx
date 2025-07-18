@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom"
 import { useVehicleById } from "../hooks/useVehicleById"
+import { useMaintenanceTypes } from "../hooks/useMaintenanceTypes"
 import NavBar from "../../../Components/NavBar"
 import { 
   VehicleDetailsHeader, 
@@ -12,6 +13,20 @@ import {
 export default function VehicleDetails() {
   const { id } = useParams<{ id: string }>()
   const { vehicle, maintenanceRecords, loading, error } = useVehicleById(id || "")
+  const { maintenanceTypes } = useMaintenanceTypes()
+
+  const handleAddMaintenanceRecord = (data: any) => {
+    console.log('New maintenance record:', data)
+    // TODO: Connect to backend API to save the record
+    // This is where you would call your API to save the maintenance record
+    
+    // Find the Arabic name for the service type
+    const serviceType = maintenanceTypes.find(type => type.key === data.type)
+    const serviceTypeName = serviceType?.arabicName || data.type
+    
+    const reminderType = data.useCustomReminder ? 'مخصص' : 'تلقائي'
+    alert(`تم إضافة سجل الصيانة بنجاح!\nنوع الخدمة: ${serviceTypeName}\nالسعر: ${data.price} دينار أردني\nنوع التذكير: ${reminderType}\nتاريخ التذكير: ${data.reminderDate}\n\n(سيتم ربطه بالباك إند لاحقاً)`)
+  }
 
   if (loading) {
     return <LoadingState />
@@ -27,7 +42,10 @@ export default function VehicleDetails() {
         <NavBar />
         <VehicleDetailsHeader />
         <VehicleInfoCard vehicle={vehicle} />
-        <MaintenanceRecordsCard maintenanceRecords={maintenanceRecords} />
+        <MaintenanceRecordsCard 
+          maintenanceRecords={maintenanceRecords} 
+          onAddRecord={handleAddMaintenanceRecord}
+        />
       </div>
     </div>
   )

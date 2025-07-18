@@ -3,6 +3,19 @@ export interface MaintenanceRecord {
   created: string;
   reminderDate: string;
   vehicleId: string;
+  price: number;
+}
+
+export interface MaintenanceType {
+  key: string;
+  arabicName: string;
+  distanceIntervalKm: number;
+  timeInterval: number;
+}
+
+export interface MaintenanceTypesResponse {
+  data: MaintenanceType[];
+  message: string;
 }
 
 export interface VehicleAPI {
