@@ -34,7 +34,7 @@ export function ErrorState({ error = "لم يتم العثور على المرك
           asChild
           className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105"
         >
-          <Link to="/my-vehicles" className="flex items-center">
+          <Link to="/vehicles" className="flex items-center">
             <ArrowLeft className="ml-2 h-4 w-4" />
             العودة إلى المركبات
           </Link>

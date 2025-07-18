@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { axiosWithAuth } from "../../../Service/axiosInstance";
 import { count_vehicles } from "../api";
-import { useState } from "react";
+
 export function useCountVehicles() {
     const [count, setCount] = useState<number>(0);
-    const [loading, setLoading] = React.useState<boolean>(true);
-    const [error, setError] = React.useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
 
     useEffect(() => {

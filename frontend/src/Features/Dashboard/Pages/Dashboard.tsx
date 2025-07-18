@@ -21,7 +21,6 @@ import {
   Legend,
 } from "recharts"
 import { Car, Calendar, AlertTriangle, Plus, Clock, TrendingUp, Wrench, CheckCircle, Activity } from "lucide-react"
-import React from "react"
 import NavBar from "../../../Components/NavBar"
 import { useFetchUpcoming } from "../hooks/useFetchUpcoming"
 import { useRecentVehicle } from "../hooks/useRecentVehicle"
@@ -482,7 +481,7 @@ export default function Dashboard() {
           />
           <MetricCard
             title="الصيانة المتأخرة"
-            value={null}
+            value="0"
             icon={AlertTriangle}
             gradient="from-red-500 to-pink-600"
           />

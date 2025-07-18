@@ -28,7 +28,7 @@ function App() {
           }
         />
                <Route
-          path="/my-vehicles"
+          path="/vehicles"
           element={
             isLoggedIn ? <Vhehicles /> : <Navigate to="/login" replace />
           }

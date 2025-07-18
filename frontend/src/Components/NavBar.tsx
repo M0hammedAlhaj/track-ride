@@ -63,7 +63,7 @@ const NavBar: React.FC = () => {
           <ul className="flex gap-10 text-gray-300 font-medium items-center">
             <li>
               <Link
-                to="/my-vehicles"
+                to="/vehicles"
                 className="hover:text-emerald-400 transition"
               >
                 مركباتي 

@@ -1,5 +1,4 @@
 // components/CarCard.tsx
-import React from "react";
 
 type CarCardProps = {
   carName: string;

@@ -11,7 +11,7 @@ export default function VehicleDetailsHeader() {
         asChild
         className="text-gray-400 hover:text-emerald-400 hover:bg-gray-800/50 transition-all duration-300"
       >
-        <Link to="/my-vehicles" className="flex items-center">
+        <Link to="/vehicles" className="flex items-center">
           <ArrowLeft className="h-4 w-4 ml-2" />
           العودة إلى المركبات
         </Link>

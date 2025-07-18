@@ -1,5 +1,5 @@
-import React from "react"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { LucideIcon } from "lucide-react"
 export function MetricCard({
   title,
   value,

@@ -1,5 +1,3 @@
-import React from 'react'
-
 export interface RegisterPayload {
     name: string;
     email: string;
@@ -8,6 +6,6 @@ export interface RegisterPayload {
 }
 
 export interface LoginPayload {
-    email: string,
-    password: string
+    email: string;
+    password: string;
 }

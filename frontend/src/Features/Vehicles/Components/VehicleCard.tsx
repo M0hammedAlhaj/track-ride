@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, Eye, Edit, Trash2 } from "lucide-react";
@@ -10,9 +9,9 @@ interface VehicleCardProps {
   vehicle: Vehicle;
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = ({vehicle}) => {
+const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }: VehicleCardProps) => {
   const navigate = useNavigate();
-  const handleViewDetails =() => {
+  const handleViewDetails = () => {
     navigate(`/vehicles/${vehicle.id}`);
   }
 
