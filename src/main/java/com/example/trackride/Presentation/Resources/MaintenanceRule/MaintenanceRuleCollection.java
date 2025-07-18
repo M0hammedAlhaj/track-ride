@@ -20,7 +20,7 @@ public class MaintenanceRuleCollection {
                 .map(entry -> new MaintenanceRuleResources(
                         entry.getKey().name(),
                         entry.getKey().getArabicName(),
-                        entry.getValue().distanceIntervalKm()
+                        entry.getValue().timeInterval()
                 ))
                 .collect(Collectors.toList());
 

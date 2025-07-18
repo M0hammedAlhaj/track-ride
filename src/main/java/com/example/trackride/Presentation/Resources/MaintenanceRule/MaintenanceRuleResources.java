@@ -6,11 +6,11 @@ import lombok.Getter;
 public class MaintenanceRuleResources {
     private String key;
     private String arabicName;
-    private Long distanceIntervalKm;
+    private Long timeInterval;
 
-    public MaintenanceRuleResources(String key, String arabicName, Long distanceIntervalKm) {
+    public MaintenanceRuleResources(String key, String arabicName, Long timeInterval) {
         this.key = key;
         this.arabicName = arabicName;
-        this.distanceIntervalKm = distanceIntervalKm;
+        this.timeInterval = timeInterval;
     }
 }
