@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import  { useState,useMemo } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Car } from "lucide-react";
 
 import NavBar from "../../../Components/NavBar";
 import VehicleCard from "../Components/VehicleCard";
-import VehicleDetailsModal from "../Components/VehicleDetailsModal";
 import VehicleHeader from "../Components/VehicleHeader";
-
 import { useVehicles } from "../hooks/useVehicles";
 import type { Vehicle, MaintenanceRecord } from "../../../types";
 

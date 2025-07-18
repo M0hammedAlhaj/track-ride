@@ -7,3 +7,7 @@ export const  assign_vehicle = (payload:VehicleSavePayload) =>{
 export const get_vehicles=()=>{
     return axiosWithAuth.get("/users/last-Maintenance");
 }
+
+export const get_vehicle_by_id = (id: string) => {
+  return axiosWithAuth.get(`/vehicles/${id}`);
+}

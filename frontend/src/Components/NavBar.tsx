@@ -1,11 +1,11 @@
-import React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../app/AuthContext";
 
-const NavBar = () => {
+const NavBar: React.FC = () => {
   const { isLoggedIn, setToken } = useAuth();
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     setToken(null);
   };
 
