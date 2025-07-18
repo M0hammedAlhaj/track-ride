@@ -3,6 +3,8 @@ package com.example.trackride.Core.MaintenanceRecord.model;
 import java.util.EnumMap;
 import java.util.Map;
 
+
+
 public class MaintenanceTimeType {
     private static final Map<MaintenanceType, MaintenanceRule> maintenanceRules =
             new EnumMap<>(MaintenanceType.class);
