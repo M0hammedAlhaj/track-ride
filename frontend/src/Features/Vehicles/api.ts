@@ -1,6 +1,6 @@
 import { axiosWithAuth } from "../../Service/axiosInstance";
 import type { VehicleSavePayload } from "./types.ts";
-import type { MaintenanceTypesResponse } from "../../types";
+import type { MaintenanceTypesResponse, MaintenanceRecordRequest } from "../../types";
 
 export const  assign_vehicle = (payload:VehicleSavePayload) =>{
   return axiosWithAuth.post("/users/assign-vehicle", payload);
@@ -16,4 +16,8 @@ export const get_vehicle_by_id = (id: string) => {
 
 export const get_maintenance_types = () => {
   return axiosWithAuth.get<MaintenanceTypesResponse>("/maintenance-records/types");
+}
+
+export const assign_maintenance_record = (vehicleId: string, payload: MaintenanceRecordRequest) => {
+  return axiosWithAuth.put(`/vehicles/${vehicleId}/maintenance`, payload);
 }

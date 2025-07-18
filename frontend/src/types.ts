@@ -6,11 +6,18 @@ export interface MaintenanceRecord {
   price: number;
 }
 
+export interface MaintenanceRecordRequest {
+  type: string;
+  description: string;
+  price: number;
+  reminderDate?: string | null;
+}
+
 export interface MaintenanceType {
   key: string;
   arabicName: string;
-  distanceIntervalKm: number;
   timeInterval: number;
+  distanceIntervalKm?: number; // Make this optional since it's not in the API response
 }
 
 export interface MaintenanceTypesResponse {

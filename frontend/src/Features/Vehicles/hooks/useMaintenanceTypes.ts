@@ -12,7 +12,11 @@ export const useMaintenanceTypes = () => {
       try {
         setLoading(true)
         const response = await get_maintenance_types()
-        setMaintenanceTypes(response.data.data)
+        console.log('API Response:', response.data)
+        // Ensure we always get an array
+        const types = Array.isArray(response.data.data) ? response.data.data : []
+        console.log('Processed types:', types)
+        setMaintenanceTypes(types)
         setError(null)
       } catch (err: any) {
         setError(err.response?.data?.message || err.message || 'فشل في تحميل أنواع الصيانة')
@@ -54,5 +58,9 @@ export const useMaintenanceTypes = () => {
     fetchMaintenanceTypes()
   }, [])
 
-  return { maintenanceTypes, loading, error }
+  return { 
+    maintenanceTypes: maintenanceTypes || [], 
+    loading, 
+    error 
+  }
 }

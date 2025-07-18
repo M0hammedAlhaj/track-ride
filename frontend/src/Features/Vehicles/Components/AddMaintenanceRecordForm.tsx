@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -26,7 +26,7 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
   
   // Helper function to get maintenance type by key
   const getMaintenanceTypeByKey = (key: string): MaintenanceType | undefined => {
-    return maintenanceTypes.find(type => type.key === key)
+    return maintenanceTypes?.find(type => type.key === key)
   }
   
   // Helper function to calculate default reminder date based on service type
@@ -41,7 +41,7 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
   const [formData, setFormData] = useState<MaintenanceRecordFormData>({
     type: '',
     description: '',
-    price: 0,
+    price: 0.01, // Start with minimum valid price instead of 0
     reminderDate: getDefaultReminderDate(),
     useCustomReminder: false
   })
@@ -67,7 +67,7 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
     setFormData({
       type: '',
       description: '',
-      price: 0,
+      price: 0.01, // Reset to minimum valid price
       reminderDate: getDefaultReminderDate(),
       useCustomReminder: false
     })
@@ -92,6 +92,9 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
             <Plus className="h-5 w-5 text-emerald-400" />
             إضافة سجل صيانة جديد
           </DialogTitle>
+          <DialogDescription className="text-gray-400">
+            قم بإضافة سجل صيانة جديد للمركبة مع تحديد نوع الخدمة والتفاصيل المطلوبة
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Maintenance Type */}
@@ -119,31 +122,38 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
                   required
                 >
                   <option value="">اختر نوع الخدمة (البيانات الافتراضية)</option>
-                  {maintenanceTypes.map((type) => (
+                  {maintenanceTypes?.map((type) => (
                     <option key={type.key} value={type.key}>
                       {type.arabicName}
                     </option>
-                  ))}
+                  )) || []}
                 </select>
                 <p className="text-xs text-yellow-400">
                   تم تحميل البيانات الافتراضية بسبب عدم توفر الاتصال بالخادم
                 </p>
               </div>
             ) : (
-              <select
-                id="type"
-                value={formData.type}
-                onChange={(e) => handleInputChange('type', e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                required
-              >
-                <option value="">اختر نوع الخدمة</option>
-                {maintenanceTypes.map((type) => (
-                  <option key={type.key} value={type.key}>
-                    {type.arabicName}
-                  </option>
-                ))}
-              </select>
+              <div className="space-y-2">
+                <select
+                  id="type"
+                  value={formData.type}
+                  onChange={(e) => handleInputChange('type', e.target.value)}
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  required
+                >
+                  <option value="">اختر نوع الخدمة</option>
+                  {maintenanceTypes?.map((type) => (
+                    <option key={type.key} value={type.key}>
+                      {type.arabicName}
+                    </option>
+                  )) || []}
+                </select>
+                {maintenanceTypes && maintenanceTypes.length > 0 && (
+                  <p className="text-xs text-emerald-400">
+                    تم تحميل {maintenanceTypes.length} أنواع خدمات من الخادم
+                  </p>
+                )}
+              </div>
             )}
           </div>
 
@@ -172,11 +182,15 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
             <Input
               id="price"
               type="number"
-              placeholder="0.00"
+              placeholder="0.01"
               value={formData.price || ''}
-              onChange={(e) => handleInputChange('price', parseFloat(e.target.value) || 0)}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value)
+                // Ensure minimum price is 0.01 (greater than zero as required by backend)
+                handleInputChange('price', value > 0 ? value : 0.01)
+              }}
               className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
-              min="0"
+              min="0.01"
               step="0.01"
             />
           </div>

@@ -26,7 +26,7 @@ export default function MaintenanceRecordsCard({ maintenanceRecords, onAddRecord
   }
 
   const getMaintenanceTypeDisplay = (typeKey: string) => {
-    const maintenanceType = maintenanceTypes.find(type => type.key === typeKey)
+    const maintenanceType = maintenanceTypes?.find(type => type.key === typeKey)
     return maintenanceType?.arabicName || typeKey
   }
 

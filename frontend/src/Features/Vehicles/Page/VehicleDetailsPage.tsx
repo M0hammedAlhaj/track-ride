@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useVehicleById } from "../hooks/useVehicleById"
 import { useMaintenanceTypes } from "../hooks/useMaintenanceTypes"
+import { assign_maintenance_record } from "../api"
 import NavBar from "../../../Components/NavBar"
 import { 
   VehicleDetailsHeader, 
@@ -12,20 +13,48 @@ import {
 
 export default function VehicleDetails() {
   const { id } = useParams<{ id: string }>()
-  const { vehicle, maintenanceRecords, loading, error } = useVehicleById(id || "")
+  const { vehicle, maintenanceRecords, loading, error, refetch } = useVehicleById(id || "")
   const { maintenanceTypes } = useMaintenanceTypes()
 
-  const handleAddMaintenanceRecord = (data: any) => {
+  const handleAddMaintenanceRecord = async (data: any) => {
     console.log('New maintenance record:', data)
-    // TODO: Connect to backend API to save the record
-    // This is where you would call your API to save the maintenance record
     
-    // Find the Arabic name for the service type
-    const serviceType = maintenanceTypes.find(type => type.key === data.type)
-    const serviceTypeName = serviceType?.arabicName || data.type
-    
-    const reminderType = data.useCustomReminder ? 'مخصص' : 'تلقائي'
-    alert(`تم إضافة سجل الصيانة بنجاح!\nنوع الخدمة: ${serviceTypeName}\nالسعر: ${data.price} دينار أردني\nنوع التذكير: ${reminderType}\nتاريخ التذكير: ${data.reminderDate}\n\n(سيتم ربطه بالباك إند لاحقاً)`)
+    try {
+      // Prepare the payload according to backend validation
+      const payload = {
+        type: data.type,
+        description: data.description,
+        price: data.price,
+        reminderDate: data.useCustomReminder ? data.reminderDate : null
+      }
+      
+      // Call the API to save the maintenance record
+      await assign_maintenance_record(id || "", payload)
+      
+      // Find the Arabic name for the service type
+      const serviceType = maintenanceTypes?.find(type => type.key === data.type)
+      const serviceTypeName = serviceType?.arabicName || data.type
+      
+      const reminderType = data.useCustomReminder ? 'مخصص' : 'تلقائي'
+      alert(`تم إضافة سجل الصيانة بنجاح!\nنوع الخدمة: ${serviceTypeName}\nالسعر: ${data.price} دينار أردني\nنوع التذكير: ${reminderType}\nتاريخ التذكير: ${data.reminderDate || 'تلقائي'}`)
+      
+      // Refresh the vehicle data to show the new maintenance record
+      await refetch()
+      
+    } catch (error: any) {
+      console.error('Error adding maintenance record:', error)
+      
+      // Handle different error types
+      if (error.response?.status === 400) {
+        alert('خطأ في البيانات المدخلة. يرجى التحقق من جميع الحقول.')
+      } else if (error.response?.status === 401) {
+        alert('انتهت صلاحية جلسة العمل. يرجى تسجيل الدخول مرة أخرى.')
+      } else if (error.response?.status === 403) {
+        alert('غير مصرح لك بإضافة سجلات الصيانة.')
+      } else {
+        alert('حدث خطأ أثناء إضافة سجل الصيانة. يرجى المحاولة مرة أخرى.')
+      }
+    }
   }
 
   if (loading) {

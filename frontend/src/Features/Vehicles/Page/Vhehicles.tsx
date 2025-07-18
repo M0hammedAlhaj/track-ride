@@ -13,11 +13,16 @@ import { useVehicles } from "../hooks/useVehicles";
 import type { Vehicle, MaintenanceRecord } from "../../../types";
 
 export default function Vehicles() {
-  const { vehicles: apiVehicles, loading, error } = useVehicles();
+  const { vehicles: apiVehicles, loading, error, refetch } = useVehicles();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Function to handle vehicle addition
+  const handleVehicleAdded = () => {
+    refetch(); // Refresh the vehicle list
+  };
 
   // Extract last service date (latest created) from maintenance records
   const getLastServiceDate = (records: MaintenanceRecord[] | null): string | null => {
@@ -65,7 +70,7 @@ export default function Vehicles() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-15">
         {/* Header */}
-        <VehicleHeader />
+        <VehicleHeader onVehicleAdded={handleVehicleAdded} />
 
         <div className="mb-8">
           <div className="relative max-w-md">
