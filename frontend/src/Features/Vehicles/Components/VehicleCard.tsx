@@ -1,18 +1,34 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, Eye, Edit, Trash2 } from "lucide-react";
 import { Vehicle } from "../../../types";
 import { useNavigate } from "react-router-dom";
+import EditVehicleForm from "./EditVehicleForm";
+
 interface VehicleCardProps {
   vehicle: Vehicle;
+  onVehicleUpdated?: () => void;
 }
 
-const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }: VehicleCardProps) => {
+const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onVehicleUpdated }: VehicleCardProps) => {
   const navigate = useNavigate();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  
   const handleViewDetails = () => {
     navigate(`/vehicles/${vehicle.id}`);
+  }
+
+  const handleEdit = () => {
+    setIsEditOpen(true);
+  }
+
+  const handleVehicleUpdated = () => {
+    if (onVehicleUpdated) {
+      onVehicleUpdated();
+    }
   }
 
   return (
@@ -56,6 +72,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }: VehicleCardProps) 
           <Button
             size="sm"
             variant="outline"
+            onClick={handleEdit}
             className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white transition-all duration-300 bg-transparent"
           >
             <Edit className="w-4 h-4 ml-1" />
@@ -69,6 +86,14 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle }: VehicleCardProps) 
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
+
+        {/* Edit Vehicle Form */}
+        <EditVehicleForm
+          vehicle={vehicle}
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+          onVehicleUpdated={handleVehicleUpdated}
+        />
       </CardContent>
     </Card>
   );

@@ -95,6 +95,7 @@ export default function Vehicles() {
               <VehicleCard
                 key={vehicle.id}
                 vehicle={vehicle}
+                onVehicleUpdated={refetch}
               />
             ))}
           </div>

@@ -5,5 +5,4 @@ public record VehicleRegistrationDTO(String license,
                                      String color,
                                      String year,
                                      String name) {
-
 }
