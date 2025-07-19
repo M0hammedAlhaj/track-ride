@@ -74,4 +74,14 @@ public class JpaUserRepository implements UserRepository {
         }
         return entityManager.merge(entity);
     }
+
+    @Override
+    @Transactional
+    public void delete(User entity) {
+        User existing = entityManager.find(User.class, entity.getId());
+        if (existing == null) {
+            throw new ResourceNotFoundException(entity.toString());
+        }
+        entityManager.remove(existing);
+    }
 }

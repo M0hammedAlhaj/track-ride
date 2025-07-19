@@ -37,9 +37,19 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
     public MaintenanceRecord update(MaintenanceRecord entity) {
         MaintenanceRecord existing = em.find(MaintenanceRecord.class, entity.getId());
         if (existing == null) {
-            throw new ResourceNotFoundException("MaintenanceRecord with ID " + entity.getId() + " not found.");
+            throw new ResourceNotFoundException(entity.getId().toString());
         }
         return em.merge(entity);
+    }
+
+    @Override
+    @Transactional
+    public void delete(MaintenanceRecord entity) {
+        MaintenanceRecord existing = em.find(MaintenanceRecord.class, entity.getId());
+        if (existing == null) {
+            throw new ResourceNotFoundException(entity.toString());
+        }
+        em.remove(existing);
     }
 
     @Override

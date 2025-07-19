@@ -35,7 +35,7 @@ public class Vehicle extends BaseEntity {
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.REMOVE)
     private Set<MaintenanceRecord> maintenanceRecords;
 
     public boolean belongsTo(User user) {

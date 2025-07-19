@@ -43,6 +43,16 @@ public class JpaVehicleRepository implements VehicleRepository {
     }
 
     @Override
+    @Transactional
+    public void delete(Vehicle entity) {
+        Vehicle existing = em.find(Vehicle.class, entity.getId());
+        if (existing == null) {
+            throw new ResourceNotFoundException("Vehicle not found");
+        }
+        em.remove(existing);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public boolean vehicleExistByLicense(String license) {
         return !em.createQuery("SELECT 1 FROM Vehicle v WHERE v.license = :license")
@@ -80,7 +90,7 @@ public class JpaVehicleRepository implements VehicleRepository {
     @Override
     public Optional<Vehicle> findMostRecentVehicleByOwnerId(UUID ownerId) {
         return em.createQuery("SELECT v FROM Vehicle v WHERE v.owner.id =:ownerId order by v.createdAt desc "
-                ,Vehicle.class)
+                        , Vehicle.class)
                 .setParameter("ownerId", ownerId)
                 .getResultList().stream().findFirst();
     }
