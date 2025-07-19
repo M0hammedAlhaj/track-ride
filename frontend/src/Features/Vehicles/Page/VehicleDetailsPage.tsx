@@ -1,7 +1,5 @@
 import { useParams } from "react-router-dom"
-import { useVehicleById } from "../hooks/useVehicleById"
-import { useMaintenanceTypes } from "../hooks/useMaintenanceTypes"
-import { assign_maintenance_record } from "../api"
+import { useVehicleById, useMaintenanceTypes, useCreateMaintenanceRecord } from "../hooks"
 import NavBar from "../../../Components/NavBar"
 import { 
   VehicleDetailsHeader, 
@@ -15,6 +13,7 @@ export default function VehicleDetails() {
   const { id } = useParams<{ id: string }>()
   const { vehicle, maintenanceRecords, loading, error, refetch } = useVehicleById(id || "")
   const { maintenanceTypes } = useMaintenanceTypes()
+  const { createMaintenanceRecord } = useCreateMaintenanceRecord()
 
   const handleAddMaintenanceRecord = async (data: any) => {
     console.log('New maintenance record:', data)
@@ -29,7 +28,7 @@ export default function VehicleDetails() {
       }
       
       // Call the API to save the maintenance record
-      await assign_maintenance_record(id || "", payload)
+      await createMaintenanceRecord(id || "", payload)
       
       // Find the Arabic name for the service type
       const serviceType = maintenanceTypes?.find(type => type.key === data.type)

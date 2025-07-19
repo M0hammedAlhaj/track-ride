@@ -21,3 +21,9 @@ export const get_maintenance_types = () => {
 export const assign_maintenance_record = (vehicleId: string, payload: MaintenanceRecordRequest) => {
   return axiosWithAuth.put(`/vehicles/${vehicleId}/maintenance`, payload);
 }
+
+export const update_vehicle = (vehicleId: string, payload: VehicleSavePayload) => {
+  console.log('API: update_vehicle called with:', { vehicleId, payload })
+  console.log('API: Making PUT request to:', `/vehicles/${vehicleId}`)
+  return axiosWithAuth.put(`/vehicles/${vehicleId}`, payload);
+}
