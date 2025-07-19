@@ -25,6 +25,5 @@ public class MaintenanceRuleCollection {
                         entry.getValue().timeInterval()
                 ))
                 .collect(Collectors.toList());
-
     }
 }
