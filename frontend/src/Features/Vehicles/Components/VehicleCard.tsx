@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Car, Eye, Edit, Trash2 } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Car, Eye, Edit, Trash2, AlertTriangle, Loader2 } from "lucide-react";
 import { Vehicle } from "../../../types";
 import { useNavigate } from "react-router-dom";
 import EditVehicleForm from "./EditVehicleForm";
+import { useDeleteVehicle } from "../hooks";
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -16,6 +18,8 @@ interface VehicleCardProps {
 const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onVehicleUpdated }: VehicleCardProps) => {
   const navigate = useNavigate();
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { deleteVehicle, loading: deleteLoading, error: deleteError } = useDeleteVehicle();
   
   const handleViewDetails = () => {
     navigate(`/vehicles/${vehicle.id}`);
@@ -23,6 +27,20 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onVehicleUpdated }: 
 
   const handleEdit = () => {
     setIsEditOpen(true);
+  }
+
+  const handleDelete = async () => {
+    if (!vehicle.id) return;
+    
+    try {
+      await deleteVehicle(vehicle.id);
+      setShowDeleteConfirm(false);
+      if (onVehicleUpdated) {
+        onVehicleUpdated();
+      }
+    } catch (err: any) {
+      // Error is handled by the hook
+    }
   }
 
   const handleVehicleUpdated = () => {
@@ -60,6 +78,52 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onVehicleUpdated }: 
         </div>
       </CardHeader>
       <CardContent className="pt-0">
+        {/* Delete Confirmation */}
+        {showDeleteConfirm && (
+          <Alert className="bg-yellow-900/20 border-yellow-600 mb-4">
+            <AlertTriangle className="h-4 w-4 text-yellow-400" />
+            <AlertDescription className="text-yellow-300">
+              <strong>تأكيد الحذف:</strong> هل أنت متأكد من حذف هذه المركبة؟ لا يمكن التراجع عن هذا الإجراء.
+              <div className="flex gap-2 mt-3">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={deleteLoading}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {deleteLoading ? (
+                    <>
+                      <Loader2 className="ml-1 h-3 w-3 animate-spin" />
+                      جاري الحذف...
+                    </>
+                  ) : (
+                    'نعم، احذف المركبة'
+                  )}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={deleteLoading}
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                >
+                  إلغاء
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Error Message */}
+        {deleteError && (
+          <Alert className="bg-red-900/20 border-red-600 mb-4">
+            <AlertDescription className="text-red-300">
+              <strong>خطأ:</strong> {deleteError}
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex gap-2">
           <Button
             size="sm"
@@ -81,6 +145,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onVehicleUpdated }: 
           <Button
             size="sm"
             variant="outline"
+            onClick={() => setShowDeleteConfirm(true)}
+            disabled={deleteLoading || showDeleteConfirm}
             className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white transition-all duration-300 bg-transparent"
           >
             <Trash2 className="w-4 h-4" />

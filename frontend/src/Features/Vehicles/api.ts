@@ -22,8 +22,20 @@ export const assign_maintenance_record = (vehicleId: string, payload: Maintenanc
   return axiosWithAuth.put(`/vehicles/${vehicleId}/maintenance`, payload);
 }
 
-export const update_vehicle = (vehicleId: string, payload: VehicleSavePayload) => {
-  console.log('API: update_vehicle called with:', { vehicleId, payload })
-  console.log('API: Making PUT request to:', `/vehicles/${vehicleId}`)
-  return axiosWithAuth.put(`/vehicles/${vehicleId}`, payload);
+export const update_vehicle = async (vehicleId: string, payload: VehicleSavePayload) => {
+  try {
+    const response = await axiosWithAuth.put(`/vehicles/${vehicleId}`, payload);
+    return response.data;
+  } catch (error: any) {
+    throw error
+  }
+}
+
+export const delete_vehicle = async (vehicleId: string) => {
+  try {
+    const response = await axiosWithAuth.delete(`/vehicles/${vehicleId}`);
+    return response.data;
+  } catch (error: any) {
+    throw error
+  }
 }

@@ -146,7 +146,43 @@ const EditVehicleForm = ({ vehicleId }: { vehicleId: string }) => {
 
 ---
 
-### 5. `useCreateMaintenanceRecord()`
+### 5. `useDeleteVehicle()`
+Hook for deleting vehicles.
+
+```tsx
+import { useDeleteVehicle } from '../hooks'
+
+const DeleteVehicleButton = ({ vehicleId }: { vehicleId: string }) => {
+  const { deleteVehicle, loading, error } = useDeleteVehicle()
+  
+  const handleDelete = async () => {
+    try {
+      await deleteVehicle(vehicleId)
+      console.log('Vehicle deleted successfully')
+    } catch (err) {
+      console.error('Failed to delete vehicle')
+    }
+  }
+  
+  return (
+    <div>
+      {error && <p>Error: {error}</p>}
+      <button onClick={handleDelete} disabled={loading}>
+        {loading ? 'Deleting...' : 'Delete Vehicle'}
+      </button>
+    </div>
+  )
+}
+```
+
+**Returns:**
+- `deleteVehicle`: `(vehicleId: string) => Promise<any>` - Function to delete a vehicle
+- `loading`: `boolean` - Loading state
+- `error`: `string | null` - Error message if any
+
+---
+
+### 6. `useCreateMaintenanceRecord()`
 Hook for creating maintenance records for vehicles.
 
 ```tsx
@@ -184,7 +220,7 @@ const AddMaintenanceForm = ({ vehicleId }: { vehicleId: string }) => {
 
 ---
 
-### 6. `useMaintenanceTypes()`
+### 7. `useMaintenanceTypes()`
 Hook for fetching available maintenance types.
 
 ```tsx

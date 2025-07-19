@@ -50,6 +50,7 @@ public class JpaVehicleRepository implements VehicleRepository {
             throw new ResourceNotFoundException("Vehicle not found");
         }
         em.remove(existing);
+        em.flush();
     }
 
     @Override

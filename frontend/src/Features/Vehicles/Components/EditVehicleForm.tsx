@@ -33,13 +33,10 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
     color: vehicle.color || ""
   })
 
-  const { updateVehicle, loading, error } = useUpdateVehicle()
+  const { updateVehicle, loading: updateLoading, error: updateError } = useUpdateVehicle()
 
-  console.log('🔍 Hook status:', { 
-    updateVehicleExists: typeof updateVehicle === 'function',
-    loading, 
-    error 
-  })
+  const loading = updateLoading
+  const error = updateError
 
   // Reset form when modal opens or vehicle changes
   useEffect(() => {
@@ -62,27 +59,20 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('🔍 Step 1: Form submitted')
-    console.log('Vehicle edit data:', formData)
     
     // Check if we have all required data
     if (!formData.name || !formData.model || !formData.year || !formData.license || !formData.color) {
-      console.error('❌ Missing required form data')
       setSubmitStatus('error')
       return
     }
-    console.log('✅ Step 2: Form validation passed')
 
     // Check if vehicle ID exists
     if (!vehicle.id) {
-      console.error('❌ Vehicle ID is missing')
       setSubmitStatus('error')
       return
     }
-    console.log('✅ Step 3: Vehicle ID exists:', vehicle.id)
 
     setSubmitStatus('idle')
-    console.log('🔍 Step 4: Status set to idle')
     
     try {
       const payload = {
@@ -93,14 +83,7 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
         color: formData.color.trim()
       }
 
-      console.log('🔍 Step 5: Payload created:', payload)
-      console.log('🔍 Step 6: About to call updateVehicle hook')
-      console.log('🔍 updateVehicle function exists?', typeof updateVehicle)
-      
-      // Make sure the function call is awaited properly
       const result = await updateVehicle(vehicle.id, payload)
-      
-      console.log('✅ Step 7: Update completed successfully:', result)
       setSubmitStatus('success')
       
       // Close modal after success
@@ -114,8 +97,6 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
       }, 1500)
       
     } catch (err: any) {
-      console.error("❌ Error in handleSubmit:", err)
-      console.error("❌ Error stack:", err.stack)
       setSubmitStatus('error')
     }
   }
@@ -147,28 +128,29 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
           <Alert className="bg-red-900/20 border-red-600">
             <XCircle className="h-4 w-4 text-red-400" />
             <AlertDescription className="text-red-300">
-              <strong>خطأ:</strong> {error || 'حدث خطأ أثناء تحديث بيانات المركبة'}
+              <strong>خطأ:</strong> {error || 'حدث خطأ أثناء العملية'}
             </AlertDescription>
           </Alert>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Vehicle Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-medium text-gray-300 flex items-center gap-2">
-              <Car className="h-4 w-4 text-emerald-400" />
-              اسم المركبة
-            </Label>
-            <Input
-              id="name"
-              placeholder="أدخل اسم المركبة (مثل: سيارتي الشخصية)"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
-              required
-            />
-          </div>
+          <fieldset disabled={loading}>
+            {/* Vehicle Name */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-medium text-gray-300 flex items-center gap-2">
+                <Car className="h-4 w-4 text-emerald-400" />
+                اسم المركبة
+              </Label>
+              <Input
+                id="name"
+                placeholder="أدخل اسم المركبة (مثل: سيارتي الشخصية)"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
+                required
+              />
+            </div>
 
           {/* Model */}
           <div className="space-y-2">
@@ -240,6 +222,7 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
               required
             />
           </div>
+          </fieldset>
 
           {/* Form Actions */}
           <div className="flex gap-3 pt-4">
@@ -262,11 +245,12 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
                 'حفظ التعديلات'
               )}
             </Button>
+            
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
               disabled={loading || submitStatus === 'success'}
             >
               إلغاء
