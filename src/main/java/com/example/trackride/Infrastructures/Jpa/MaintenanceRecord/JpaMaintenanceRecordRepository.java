@@ -72,7 +72,6 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
                 .setParameter("ownerId", ownerId)
                 .setParameter("now", LocalDate.now())
                 .getSingleResult();
-
     }
 
     public List<MaintenanceRecord> findFirstMaintenanceRecordByOwnerIdAndStatus(UUID ownerId,
@@ -87,5 +86,14 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
                 .setParameter("ownerId", ownerId)
                 .setParameter("status", status)
                 .getResultList();
+    }
+
+    @Override
+    public Long countOverdueMaintenanceRecordsByOwnerId(UUID ownerId) {
+        return em.createQuery("SELECT COUNT(m) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId AND m.status =:status AND m.reminder<:now", Long.class)
+                .setParameter("ownerId", ownerId)
+                .setParameter("status", MaintenanceStatus.UP_COMING)
+                .setParameter("now", LocalDate.now())
+                .getSingleResult();
     }
 }

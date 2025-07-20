@@ -14,4 +14,6 @@ public interface MaintenanceRecordRepository extends BaseRepository<MaintenanceR
     Long countFirstUpcomingMaintenanceByOwnerId(UUID ownerId);
 
     List<MaintenanceRecord> findFirstMaintenanceRecordByOwnerIdAndStatus(UUID ownerId, MaintenanceStatus status);
+
+    Long countOverdueMaintenanceRecordsByOwnerId(UUID ownerId);
 }
