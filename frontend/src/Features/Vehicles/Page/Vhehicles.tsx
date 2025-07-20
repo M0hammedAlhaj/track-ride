@@ -24,9 +24,10 @@ export default function Vehicles() {
     refetch(); // Refresh the vehicle list
   };
 
-  // Extract last service date (latest created) from maintenance records
+    // Extract last service date (latest created) from maintenance records
   const getLastServiceDate = (records: MaintenanceRecord[] | null): string | null => {
     if (!records || records.length === 0) return null;
+    
     const sorted = [...records].sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
     return sorted[0].created;
   };

@@ -2,6 +2,7 @@ package com.example.trackride.Application.MaintenanceRecord.UseCase;
 
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecordRepository;
+import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;

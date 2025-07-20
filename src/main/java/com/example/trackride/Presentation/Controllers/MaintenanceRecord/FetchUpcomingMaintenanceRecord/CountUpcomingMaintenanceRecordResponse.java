@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FetchUpcomingMaintenanceRecordResponse {
+public class CountUpcomingMaintenanceRecordResponse {
     public static ResponseEntity<Map<String, Object>> success(Long countUpcoming) {
         Map<String, Object> response = new HashMap<>();
         response.put("data", countUpcoming);

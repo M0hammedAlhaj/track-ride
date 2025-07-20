@@ -7,7 +7,7 @@ export const count_vehicles = () =>
     axiosWithAuth.get("/vehicles/count-vehicles");
 
 export const upconing_maintenance = () =>
-    axiosWithAuth.get("/maintenance-records/up-coming");
+    axiosWithAuth.get("/users/maintenance-record/first-upcoming");
 
 export const getRecentVehicle =() =>
     axiosWithAuth.get("/vehicles/most-recent");

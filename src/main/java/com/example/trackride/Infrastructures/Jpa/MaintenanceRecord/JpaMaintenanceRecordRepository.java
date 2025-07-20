@@ -2,6 +2,7 @@ package com.example.trackride.Infrastructures.Jpa.MaintenanceRecord;
 
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecordRepository;
+import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,13 +64,28 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
                 .getResultList().stream().findFirst();
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public Long findFirstUpcomingMaintenanceByOwnerId(UUID ownerId) {
+    public Long countFirstUpcomingMaintenanceByOwnerId(UUID ownerId) {
         return em.createQuery("SELECT COUNT(m) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId AND m.reminder>: now", Long.class)
                 .setParameter("ownerId", ownerId)
                 .setParameter("now", LocalDate.now())
                 .getSingleResult();
 
+    }
+
+    public List<MaintenanceRecord> findFirstMaintenanceRecordByOwnerIdAndStatus(UUID ownerId,
+                                                                                MaintenanceStatus status) {
+        return em.createQuery(
+                        "SELECT m FROM MaintenanceRecord m " +
+                                "WHERE m.reminder = (" +
+                                "    SELECT MIN(m2.reminder) FROM MaintenanceRecord m2 " +
+                                "    WHERE m2.vehicle.id = m.vehicle.id AND m2.status = :status" +
+                                ") " +
+                                "AND m.vehicle.owner.id = :ownerId AND m.status = :status", MaintenanceRecord.class)
+                .setParameter("ownerId", ownerId)
+                .setParameter("status", status)
+                .getResultList();
     }
 }

@@ -2,16 +2,15 @@ package com.example.trackride.Application.MaintenanceRecord.UseCase;
 
 import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecordRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CountUpcomingMaintenanceRecordUseCase {
+public class GetRecentActivityMaintenanceUseCase {
     private final MaintenanceRecordRepository maintenanceRecordRepository;
 
-    public Long execute(String userId) {
-        return maintenanceRecordRepository.countFirstUpcomingMaintenanceByOwnerId(UUID.fromString(userId));
+    public ResponseEntity<?> execute() {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.trackride.Presentation.Resources.MaintenanceRecord;
 
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
+import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -20,6 +21,8 @@ public class MaintenanceRecordResources {
 
     private final BigDecimal price;
 
+    private final MaintenanceStatus status;
+
     public MaintenanceRecordResources(MaintenanceRecord maintenanceRecord) {
         this.type = maintenanceRecord.getType().toString();
         this.created = maintenanceRecord.getCreatedAt().toLocalDate();
@@ -29,5 +32,6 @@ public class MaintenanceRecordResources {
         this.vehicleId = maintenanceRecord.getVehicle() != null
                 ? maintenanceRecord.getVehicle().getId().toString()
                 : null;
+        this.status = maintenanceRecord.getStatus();
     }
 }

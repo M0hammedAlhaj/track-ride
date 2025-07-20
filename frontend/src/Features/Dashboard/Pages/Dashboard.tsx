@@ -24,6 +24,8 @@ import { Car, Calendar, AlertTriangle, Plus, Clock, TrendingUp, Wrench, CheckCir
 import NavBar from "../../../Components/NavBar"
 import { useFetchUpcoming } from "../hooks/useFetchUpcoming"
 import { useRecentVehicle } from "../hooks/useRecentVehicle"
+import { useLastMaintenance } from "../hooks/useLastMaintenance"
+import { useUpcomingMaintenance } from "../hooks/useUpcomingMaintenance"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -45,6 +47,29 @@ interface UpcomingMaintenance {
   lastServiceDate: string
   nextReminderDate: string
   priority: "high" | "medium" | "low"
+}
+
+interface MaintenanceData {
+  id: string
+  vehicleName: string
+  licensePlate: string
+  lastServiceDate: string
+  nextReminderDate: string
+  priority: "high" | "medium" | "low"
+}
+
+interface UpcomingMaintenanceRecord {
+  id: string
+  type: string
+  created: string
+  reminderDate: string
+  vehicleId: string
+  vehicleName: string
+  vehicleYear: string
+  licensePlate: string
+  description: string
+  price: number
+  status: string
 }
 
 interface RecentActivity {
@@ -239,31 +264,34 @@ function MaintenanceChart({ data }: { data: ChartDataItem[] }) {
 }
 
 // Upcoming Maintenance Table Component
-function UpcomingMaintenanceTable({ data }: { data: UpcomingMaintenance[] }) {
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-500/20 text-red-400 border-red-500/30"
-      case "medium":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-      case "low":
-        return "bg-green-500/20 text-green-400 border-green-500/30"
-      default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+function UpcomingMaintenanceTable({ 
+  data, 
+  loading = false, 
+  error = null 
+}: { 
+  data: UpcomingMaintenanceRecord[]
+  loading?: boolean
+  error?: string | null
+}) {
+  const getMaintenanceTypeLabel = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      'OIL_CHANGE': 'تغيير الزيت',
+      'BRAKE_INSPECTION': 'فحص الفرامل',
+      'ENGINE_CHECK': 'فحص المحرك',
+      'TIRE_ROTATION': 'دوران الإطارات',
+      'GENERAL_MAINTENANCE': 'صيانة عامة'
     }
+    return typeMap[type] || type
   }
 
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case "high":
-        return "عالية"
-      case "medium":
-        return "متوسطة"
-      case "low":
-        return "منخفضة"
-      default:
-        return "غير محدد"
-    }
+  const handleComplete = (recordId: string) => {
+    console.log('Complete maintenance:', recordId)
+    // TODO: Implement complete maintenance API call
+  }
+
+  const handleCancel = (recordId: string) => {
+    console.log('Cancel maintenance:', recordId)
+    // TODO: Implement cancel maintenance API call
   }
 
   return (
@@ -275,48 +303,82 @@ function UpcomingMaintenanceTable({ data }: { data: UpcomingMaintenance[] }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-gray-600 hover:bg-gray-700/50">
-                <TableHead className="text-gray-300">اسم المركبة</TableHead>
-                <TableHead className="text-gray-300">رقم اللوحة</TableHead>
-                <TableHead className="text-gray-300">آخر صيانة</TableHead>
-                <TableHead className="text-gray-300">التذكير القادم</TableHead>
-                <TableHead className="text-gray-300">الأولوية</TableHead>
-                <TableHead className="text-gray-300">الإجراء</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {data.map((item) => (
-                <TableRow key={item.id} className="border-gray-600 hover:bg-gray-700/30">
-                  <TableCell className="text-white font-medium">{item.vehicleName}</TableCell>
-                  <TableCell className="text-gray-300 font-mono">{item.licensePlate}</TableCell>
-                  <TableCell className="text-gray-300">
-                    {new Date(item.lastServiceDate).toLocaleDateString("ar-SA")}
-                  </TableCell>
-                  <TableCell className="text-emerald-400 font-medium">
-                    {new Date(item.nextReminderDate).toLocaleDateString("ar-SA")}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={`${getPriorityColor(item.priority)} border`}>
-                      {getPriorityLabel(item.priority)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white transition-all duration-300 hover:scale-105"
-                    >
-                      <Clock className="w-4 h-4 ml-1" />
-                      جدولة
-                    </Button>
-                  </TableCell>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-gray-400">جاري التحميل...</div>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-red-400">خطأ في تحميل البيانات</div>
+          </div>
+        ) : data.length === 0 ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-gray-400">لا توجد صيانة قادمة</div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-gray-600 hover:bg-gray-700/50">
+                  <TableHead className="text-gray-300 text-right">اسم المركبة</TableHead>
+                  <TableHead className="text-gray-300 text-right">رقم اللوحة</TableHead>
+                  <TableHead className="text-gray-300 text-right">السنة</TableHead>
+                  <TableHead className="text-gray-300 text-right">نوع الصيانة</TableHead>
+                  <TableHead className="text-gray-300 text-right">تمت الصيانة</TableHead>
+                  <TableHead className="text-gray-300 text-right">موعد التذكير</TableHead>
+                  <TableHead className="text-gray-300 text-right">الإجراء</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+              </TableHeader>
+              <TableBody>
+                {data.map((item) => (
+                  <TableRow key={item.id} className="border-gray-600 hover:bg-gray-700/30">
+                    <TableCell className="text-white font-medium text-right">{item.vehicleName}</TableCell>
+                    <TableCell className="text-gray-300 font-mono text-right">{item.licensePlate}</TableCell>
+                    <TableCell className="text-gray-300 text-right">{item.vehicleYear}</TableCell>
+                    <TableCell className="text-white font-medium text-right">
+                      {getMaintenanceTypeLabel(item.type)}
+                    </TableCell>
+                    <TableCell className="text-gray-300 text-right">
+                      {new Date(item.created).toLocaleDateString("ar-EG", {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </TableCell>
+                    <TableCell className="text-emerald-400 font-medium text-right">
+                      {new Date(item.reminderDate).toLocaleDateString("ar-EG", {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex gap-2 justify-start">
+                        <Button
+                          size="sm"
+                          onClick={() => handleComplete(item.id)}
+                          className="bg-green-600 hover:bg-green-700 text-white transition-all duration-300 hover:scale-105"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-1" />
+                          تمت
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleCancel(item.id)}
+                          className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300 hover:scale-105"
+                        >
+                          <AlertTriangle className="w-4 h-4 mr-1" />
+                          إلغاء
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -407,51 +469,17 @@ function RecentActivityList({ data }: { data: RecentActivity[] }) {
 // Quick Actions Component
 function QuickActions() {
   return (
-    <>
-      {/* Desktop Quick Actions */}
-      <div className="hidden md:flex gap-4 mt-8">
-        <Button
-          size="lg"
-          className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105"
-        >
-          <Plus className="w-5 h-5 ml-2" />
-          إضافة مركبة جديدة
-        </Button>
-        <Button
-          size="lg"
-          variant="outline"
-          className="border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-gray-900 transition-all duration-300 hover:scale-105 bg-transparent"
-        >
-          <Wrench className="w-5 h-5 ml-2" />
-          تسجيل صيانة
-        </Button>
-      </div>
-
-      {/* Mobile Floating Action Buttons */}
-      <div className="md:hidden fixed bottom-6 left-6 z-50 flex flex-col gap-3">
-        <Button
-          size="lg"
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-2xl hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-110"
-        >
-          <Plus className="w-6 h-6" />
-        </Button>
-        <Button
-          size="lg"
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-110"
-        >
-          <Wrench className="w-6 h-6" />
-        </Button>
-      </div>
-    </>
+    <></>
   )
 }
 
 // Main Dashboard Component
 export default function Dashboard() {
-  const { stats, chartData, upcomingMaintenance, recentActivity } = dashboardData
+  const { stats, chartData, recentActivity } = dashboardData
   const {count,loading,error  } = useCountVehicles()
   const { upcomingDate, loading: upcomingLoading, error: upcomingError } =useFetchUpcoming()
   const { vehicle, loading:recentLoading, error:recentError } = useRecentVehicle();
+  const { data: upcomingMaintenanceData, loading: upcomingMaintenanceLoading, error: upcomingMaintenanceError } = useUpcomingMaintenance();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
@@ -475,7 +503,7 @@ export default function Dashboard() {
           />
           <MetricCard
             title="الصيانة القادمة"
-            value={upcomingLoading ? "..." : upcomingError ? "خطأ" : upcomingDate ==null? 0 : upcomingDate}
+            value={upcomingLoading ? "..." : upcomingError ? "خطأ" : (upcomingDate ?? 0)}
             icon={Calendar}
             gradient="from-blue-500 to-cyan-600"
           />
@@ -505,7 +533,11 @@ export default function Dashboard() {
 
         {/* Upcoming Maintenance Table */}
         <div className="mb-8">
-          <UpcomingMaintenanceTable data={upcomingMaintenance} />
+          <UpcomingMaintenanceTable 
+            data={upcomingMaintenanceLoading ? [] : upcomingMaintenanceError ? [] : upcomingMaintenanceData} 
+            loading={upcomingMaintenanceLoading}
+            error={upcomingMaintenanceError}
+          />
         </div>
 
         {/* Quick Actions */}

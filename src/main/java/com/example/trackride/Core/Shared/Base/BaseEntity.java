@@ -1,6 +1,8 @@
 package com.example.trackride.Core.Shared.Base;
 
 
+import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
+import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +31,9 @@ public abstract class BaseEntity {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
+        if (this instanceof MaintenanceRecord) {
+            ((MaintenanceRecord) this).setStatus(MaintenanceStatus.UP_COMING);
+        }
     }
 
     @PreUpdate

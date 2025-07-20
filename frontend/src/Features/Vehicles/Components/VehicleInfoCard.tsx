@@ -56,7 +56,16 @@ export default function VehicleInfoCard({ vehicle }: VehicleInfoCardProps) {
             <Clock className="h-5 w-5 text-gray-400" />
             <div>
               <p className="text-sm text-gray-400">آخر صيانة</p>
-              <p className="font-semibold text-white">{vehicle.lastService || "غير محدد"}</p>
+              <p className="font-semibold text-white">
+                {vehicle.lastService 
+                  ? new Date(vehicle.lastService).toLocaleDateString("ar-EG", {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })
+                  : "غير محدد"
+                }
+              </p>
             </div>
           </div>
         </div>

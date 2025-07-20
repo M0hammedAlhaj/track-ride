@@ -3,7 +3,9 @@ export interface MaintenanceRecord {
   created: string;
   reminderDate: string;
   vehicleId: string;
+  description?: string;
   price: number;
+  status: string;
 }
 
 export interface MaintenanceRecordRequest {

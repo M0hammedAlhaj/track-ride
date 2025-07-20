@@ -11,9 +11,18 @@ export function useFetchUpcoming() {
     async function loadUpcomingDate() {
       try {
         const response = await upconing_maintenance();
-        setUpcomingDate(response.data.data); // API returns { data: string }
+        console.log('Upcoming maintenance API response:', response.data); // Debug log
+        
+        // Handle different possible response structures
+        const count = response.data?.data ?? response.data?.count ?? 0;
+        console.log('Extracted count:', count); // Debug log
+        
+        setUpcomingDate(typeof count === 'number' ? count : 0);
+        setError(null);
       } catch (err) {
+        console.error('Error fetching upcoming maintenance:', err); // Debug log
         setError("تعذر تحميل الصيانة القادمة");
+        setUpcomingDate(0); // Set to 0 on error
       } finally {
         setLoading(false);
       }

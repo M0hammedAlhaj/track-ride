@@ -1,5 +1,6 @@
 package com.example.trackride.Core.MaintenanceRecord.Entity;
 
+import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
 import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceType;
 import com.example.trackride.Core.Shared.Base.BaseEntity;
 import com.example.trackride.Core.Vehicle.Entity.Vehicle;
@@ -33,6 +34,9 @@ public class MaintenanceRecord extends BaseEntity {
     private BigDecimal price;
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private MaintenanceStatus status;
 
     public void assignVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;

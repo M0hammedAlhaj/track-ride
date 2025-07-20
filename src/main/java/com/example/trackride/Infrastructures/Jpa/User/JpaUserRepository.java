@@ -34,7 +34,7 @@ public class JpaUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findUserByIdWithVehicles(UUID userId) {
-        return entityManager.createQuery("SELECT u FROM User u JOIN FETCH u.vehicles WHERE u.id =: userId",
+        return entityManager.createQuery("SELECT u FROM User u LEFT JOIN FETCH u.vehicles WHERE u.id =: userId",
                         User.class)
                 .setParameter("userId", userId)
                 .getResultList()
