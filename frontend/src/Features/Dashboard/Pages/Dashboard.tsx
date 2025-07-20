@@ -173,6 +173,103 @@ const dashboardData: DashboardData = {
   ],
 }
 
+// Total Cost Card Component
+function TotalCostCard() {
+  // Placeholder values - will be replaced with real API data
+  const totalCost = 1250.75 // Will come from API
+  const monthlyAverage = 208.46 // Will come from API
+  const lastMonthCost = 195.30 // Will come from API
+  
+  const costChange = totalCost > lastMonthCost ? 'increase' : 'decrease'
+  const costPercentage = lastMonthCost > 0 ? Math.abs(((totalCost - lastMonthCost) / lastMonthCost) * 100).toFixed(1) : 0
+
+  return (
+    <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold text-white flex items-center">
+          <TrendingUp className="w-6 h-6 ml-2 text-emerald-400" />
+          إجمالي التكلفة
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Total Cost Display */}
+          <div className="text-center">
+            <div className="text-4xl font-bold text-emerald-400 mb-2">
+              {totalCost.toFixed(2)} دينار
+            </div>
+            <p className="text-gray-400 text-sm">إجمالي تكلفة الصيانة</p>
+          </div>
+
+          {/* Statistics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">المتوسط الشهري</p>
+                  <p className="text-white font-semibold">{monthlyAverage.toFixed(2)} دينار</p>
+                </div>
+                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-blue-400" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-700">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-400 text-sm">الشهر الماضي</p>
+                  <p className="text-white font-semibold">{lastMonthCost.toFixed(2)} دينار</p>
+                  <div className={`flex items-center mt-1 ${costChange === 'increase' ? 'text-red-400' : 'text-green-400'}`}>
+                    {costChange === 'increase' ? (
+                      <TrendingUp className="w-3 h-3 mr-1" />
+                    ) : (
+                      <TrendingUp className="w-3 h-3 mr-1 rotate-180" />
+                    )}
+                    <span className="text-xs">{costPercentage}%</span>
+                  </div>
+                </div>
+                <div className={`w-10 h-10 ${costChange === 'increase' ? 'bg-red-500/20' : 'bg-green-500/20'} rounded-lg flex items-center justify-center`}>
+                  {costChange === 'increase' ? (
+                    <TrendingUp className="w-5 h-5 text-red-400" />
+                  ) : (
+                    <TrendingUp className="w-5 h-5 text-green-400 rotate-180" />
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Cost Breakdown */}
+          <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-700">
+            <h3 className="text-white font-medium mb-3">تفاصيل التكلفة</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">تغيير الزيت</span>
+                <span className="text-white">450.25 دينار</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">فحص الفرامل</span>
+                <span className="text-white">320.50 دينار</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">صيانة عامة</span>
+                <span className="text-white">480.00 دينار</span>
+              </div>
+              <div className="border-t border-gray-600 pt-2 mt-2">
+                <div className="flex justify-between font-medium">
+                  <span className="text-emerald-400">الإجمالي</span>
+                  <span className="text-emerald-400">{totalCost.toFixed(2)} دينار</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 // Chart Component
 function MaintenanceChart({ data }: { data: ChartDataItem[] }) {
   const [chartType, setChartType] = useState<"pie" | "bar">("pie")
@@ -524,7 +621,7 @@ export default function Dashboard() {
         {/* Chart and Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="lg:col-span-2">
-            <MaintenanceChart data={chartData} />
+            <TotalCostCard />
           </div>
           <div>
             <RecentActivityList data={recentActivity} />
