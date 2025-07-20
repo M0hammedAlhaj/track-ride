@@ -26,6 +26,7 @@ import { useFetchUpcoming } from "../hooks/useFetchUpcoming"
 import { useRecentVehicle } from "../hooks/useRecentVehicle"
 import { useLastMaintenance } from "../hooks/useLastMaintenance"
 import { useUpcomingMaintenance } from "../hooks/useUpcomingMaintenance"
+import { useCountOverdue } from "../hooks/useCountOverdue"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -577,6 +578,7 @@ export default function Dashboard() {
   const { upcomingDate, loading: upcomingLoading, error: upcomingError } =useFetchUpcoming()
   const { vehicle, loading:recentLoading, error:recentError } = useRecentVehicle();
   const { data: upcomingMaintenanceData, loading: upcomingMaintenanceLoading, error: upcomingMaintenanceError } = useUpcomingMaintenance();
+  const { count: overdueCount, loading: overdueLoading, error: overdueError } = useCountOverdue();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
@@ -606,7 +608,7 @@ export default function Dashboard() {
           />
           <MetricCard
             title="الصيانة المتأخرة"
-            value="0"
+            value={overdueLoading ? "..." : overdueError ? "خطأ" : overdueCount}
             icon={AlertTriangle}
             gradient="from-red-500 to-pink-600"
           />

@@ -11,3 +11,6 @@ export const upconing_maintenance = () =>
 
 export const getRecentVehicle =() =>
     axiosWithAuth.get("/vehicles/most-recent");
+
+export const count_overdue_maintenance = () =>
+    axiosWithAuth.get("/users/maintenance-record/count-overdue");
