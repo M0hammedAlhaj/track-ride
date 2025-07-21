@@ -24,7 +24,6 @@ import { Car, Calendar, AlertTriangle, Plus, Clock, TrendingUp, Wrench, CheckCir
 import NavBar from "../../../Components/NavBar"
 import { useFetchUpcoming } from "../hooks/useFetchUpcoming"
 import { useRecentVehicle } from "../hooks/useRecentVehicle"
-import { useLastMaintenance } from "../hooks/useLastMaintenance"
 import { useUpcomingMaintenance } from "../hooks/useUpcomingMaintenance"
 import { useCountOverdue } from "../hooks/useCountOverdue"
 import { useRecentActivity } from "../hooks/useRecentActivity"
