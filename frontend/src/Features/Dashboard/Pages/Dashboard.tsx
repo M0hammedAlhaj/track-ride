@@ -27,6 +27,8 @@ import { useRecentVehicle } from "../hooks/useRecentVehicle"
 import { useLastMaintenance } from "../hooks/useLastMaintenance"
 import { useUpcomingMaintenance } from "../hooks/useUpcomingMaintenance"
 import { useCountOverdue } from "../hooks/useCountOverdue"
+import { useRecentActivity } from "../hooks/useRecentActivity"
+import { useMaintenanceTypes } from "../../MaintenanceTypes/hooks/useMaintenanceTypes"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -85,7 +87,6 @@ interface DashboardData {
   stats: DashboardStats
   chartData: ChartDataItem[]
   upcomingMaintenance: UpcomingMaintenance[]
-  recentActivity: RecentActivity[]
 }
 
 // Dummy Data
@@ -133,43 +134,6 @@ const dashboardData: DashboardData = {
       lastServiceDate: "2024-11-30",
       nextReminderDate: "2025-01-30",
       priority: "medium",
-    },
-  ],
-  recentActivity: [
-    {
-      id: "1",
-      vehicleName: "Toyota Camry",
-      maintenanceType: "تغيير الزيت",
-      date: "2024-12-15",
-      status: "completed",
-    },
-    {
-      id: "2",
-      vehicleName: "BMW X5",
-      maintenanceType: "فحص الفرامل",
-      date: "2024-12-14",
-      status: "completed",
-    },
-    {
-      id: "3",
-      vehicleName: "Mercedes C-Class",
-      maintenanceType: "صيانة دورية",
-      date: "2024-12-13",
-      status: "scheduled",
-    },
-    {
-      id: "4",
-      vehicleName: "Honda Accord",
-      maintenanceType: "تغيير الإطارات",
-      date: "2024-12-12",
-      status: "completed",
-    },
-    {
-      id: "5",
-      vehicleName: "Nissan Altima",
-      maintenanceType: "فحص المحرك",
-      date: "2024-12-11",
-      status: "cancelled",
     },
   ],
 }
@@ -365,23 +329,14 @@ function MaintenanceChart({ data }: { data: ChartDataItem[] }) {
 function UpcomingMaintenanceTable({ 
   data, 
   loading = false, 
-  error = null 
+  error = null,
+  getTypeInArabic
 }: { 
   data: UpcomingMaintenanceRecord[]
   loading?: boolean
   error?: string | null
+  getTypeInArabic: (type: string) => string
 }) {
-  const getMaintenanceTypeLabel = (type: string) => {
-    const typeMap: { [key: string]: string } = {
-      'OIL_CHANGE': 'تغيير الزيت',
-      'BRAKE_INSPECTION': 'فحص الفرامل',
-      'ENGINE_CHECK': 'فحص المحرك',
-      'TIRE_ROTATION': 'دوران الإطارات',
-      'GENERAL_MAINTENANCE': 'صيانة عامة'
-    }
-    return typeMap[type] || type
-  }
-
   const handleComplete = (recordId: string) => {
     console.log('Complete maintenance:', recordId)
     // TODO: Implement complete maintenance API call
@@ -434,20 +389,20 @@ function UpcomingMaintenanceTable({
                     <TableCell className="text-gray-300 font-mono text-right">{item.licensePlate}</TableCell>
                     <TableCell className="text-gray-300 text-right">{item.vehicleYear}</TableCell>
                     <TableCell className="text-white font-medium text-right">
-                      {getMaintenanceTypeLabel(item.type)}
+                      {getTypeInArabic(item.type)}
                     </TableCell>
                     <TableCell className="text-gray-300 text-right">
-                      {new Date(item.created).toLocaleDateString("ar-EG", {
+                      {new Date(item.created).toLocaleDateString("en-US", {
                         year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                        month: '2-digit',
+                        day: '2-digit'
                       })}
                     </TableCell>
                     <TableCell className="text-emerald-400 font-medium text-right">
-                      {new Date(item.reminderDate).toLocaleDateString("ar-EG", {
+                      {new Date(item.reminderDate).toLocaleDateString("en-US", {
                         year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                        month: '2-digit',
+                        day: '2-digit'
                       })}
                     </TableCell>
                     <TableCell className="text-right">
@@ -483,46 +438,7 @@ function UpcomingMaintenanceTable({
 }
 
 // Recent Activity Component
-function RecentActivityList({ data }: { data: RecentActivity[] }) {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-500/20 text-green-400 border-green-500/30"
-      case "scheduled":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30"
-      case "cancelled":
-        return "bg-red-500/20 text-red-400 border-red-500/30"
-      default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30"
-    }
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "مكتملة"
-      case "scheduled":
-        return "مجدولة"
-      case "cancelled":
-        return "ملغية"
-      default:
-        return "غير محدد"
-    }
-  }
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "completed":
-        return CheckCircle
-      case "scheduled":
-        return Clock
-      case "cancelled":
-        return AlertTriangle
-      default:
-        return Activity
-    }
-  }
-
+function RecentActivityList({ data, loading, error }: { data: RecentActivity[], loading?: boolean, error?: string | null }) {
   return (
     <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
       <CardHeader>
@@ -532,17 +448,45 @@ function RecentActivityList({ data }: { data: RecentActivity[] }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {data.map((activity) => {
-            const StatusIcon = getStatusIcon(activity.status)
-            return (
+        {loading ? (
+          <div className="space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg animate-pulse">
+                <div className="flex items-center space-x-4 space-x-reverse">
+                  <div className="w-10 h-10 bg-gray-600/50 rounded-lg"></div>
+                  <div>
+                    <div className="w-32 h-4 bg-gray-600/50 rounded mb-2"></div>
+                    <div className="w-24 h-3 bg-gray-600/50 rounded"></div>
+                  </div>
+                </div>
+                <div className="text-left">
+                  <div className="w-20 h-3 bg-gray-600/50 rounded mb-1"></div>
+                  <div className="w-16 h-6 bg-gray-600/50 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-8">
+            <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
+            <p className="text-red-400 mb-2">خطأ في تحميل النشاط الأخير</p>
+            <p className="text-gray-400 text-sm">{error}</p>
+          </div>
+        ) : data.length === 0 ? (
+          <div className="text-center py-8">
+            <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-400">لا يوجد نشاط حديث</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {data.map((activity) => (
               <div
                 key={activity.id}
                 className="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors duration-300"
               >
                 <div className="flex items-center space-x-4 space-x-reverse">
                   <div className="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                    <StatusIcon className="w-5 h-5 text-emerald-400" />
+                    <Activity className="w-5 h-5 text-emerald-400" />
                   </div>
                   <div>
                     <p className="text-white font-medium">{activity.vehicleName}</p>
@@ -550,15 +494,16 @@ function RecentActivityList({ data }: { data: RecentActivity[] }) {
                   </div>
                 </div>
                 <div className="text-left">
-                  <p className="text-gray-300 text-sm mb-1">{new Date(activity.date).toLocaleDateString("ar-SA")}</p>
-                  <Badge className={`${getStatusColor(activity.status)} border text-xs`}>
-                    {getStatusLabel(activity.status)}
-                  </Badge>
+                  <p className="text-gray-300 text-sm mb-1">{new Date(activity.date).toLocaleDateString("en-US", {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                  })}</p>
                 </div>
               </div>
-            )
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   )
@@ -573,12 +518,14 @@ function QuickActions() {
 
 // Main Dashboard Component
 export default function Dashboard() {
-  const { stats, chartData, recentActivity } = dashboardData
+  const { stats, chartData } = dashboardData // Remove recentActivity from dummy data
   const {count,loading,error  } = useCountVehicles()
   const { upcomingDate, loading: upcomingLoading, error: upcomingError } =useFetchUpcoming()
   const { vehicle, loading:recentLoading, error:recentError } = useRecentVehicle();
   const { data: upcomingMaintenanceData, loading: upcomingMaintenanceLoading, error: upcomingMaintenanceError } = useUpcomingMaintenance();
   const { count: overdueCount, loading: overdueLoading, error: overdueError } = useCountOverdue();
+  const { activities: recentActivity, loading: recentActivityLoading, error: recentActivityError } = useRecentActivity();
+  const { getTypeInArabic } = useMaintenanceTypes();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
@@ -626,7 +573,11 @@ export default function Dashboard() {
             <TotalCostCard />
           </div>
           <div>
-            <RecentActivityList data={recentActivity} />
+            <RecentActivityList 
+              data={recentActivityLoading ? [] : recentActivityError ? [] : recentActivity} 
+              loading={recentActivityLoading}
+              error={recentActivityError}
+            />
           </div>
         </div>
 
@@ -636,6 +587,7 @@ export default function Dashboard() {
             data={upcomingMaintenanceLoading ? [] : upcomingMaintenanceError ? [] : upcomingMaintenanceData} 
             loading={upcomingMaintenanceLoading}
             error={upcomingMaintenanceError}
+            getTypeInArabic={getTypeInArabic}
           />
         </div>
 

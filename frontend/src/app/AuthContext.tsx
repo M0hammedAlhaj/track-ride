@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import { initializeMaintenanceTypes } from "../Features/MaintenanceTypes/api";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -23,6 +24,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      // Initialize maintenance types when user is logged in (for performance)
+      initializeMaintenanceTypes();
     } else {
       localStorage.removeItem("token");
     }
