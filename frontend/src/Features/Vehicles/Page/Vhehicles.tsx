@@ -9,11 +9,23 @@ import { Search, Plus, Car } from "lucide-react";
 import NavBar from "../../../Components/NavBar";
 import VehicleCard from "../Components/VehicleCard";
 import VehicleHeader from "../Components/VehicleHeader";
-import { useVehicles } from "../hooks/useVehicles";
+import { VehiclesPagination } from "../Components/VehiclesPagination";
+import { useVehiclesPaginated } from "../hooks/useVehiclesPaginated";
 import type { Vehicle, MaintenanceRecord } from "../../../types";
 
 export default function Vehicles() {
-  const { vehicles: apiVehicles, loading, error, refetch } = useVehicles();
+  const { 
+    vehicles: apiVehicles, 
+    loading, 
+    error, 
+    currentPage,
+    totalPages,
+    totalElements,
+    pageSize,
+    goToPage,
+    changePageSize,
+    refetch 
+  } = useVehiclesPaginated();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
@@ -26,7 +38,7 @@ export default function Vehicles() {
 
     // Extract last service date (latest created) from maintenance records
   const getLastServiceDate = (records: MaintenanceRecord[] | null): string | null => {
-    if (!records || records.length === 0) return null;
+    if (!records || records.length === 0) return "لا يوجد صيانات";
     
     const sorted = [...records].sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
     return sorted[0].created;
@@ -34,19 +46,32 @@ export default function Vehicles() {
 
   // Transform API data into UI-friendly Vehicle[]
   const transformedVehicles: Vehicle[] = useMemo(() => {
-    if (!apiVehicles || !Array.isArray(apiVehicles)) return [];
-    return apiVehicles.map((item) => {
+    console.log('Raw API Vehicles:', apiVehicles); // Debug log
+    if (!apiVehicles || !Array.isArray(apiVehicles)) {
+      console.log('No vehicles or not array:', apiVehicles);
+      return [];
+    }
+    
+    const transformed = apiVehicles.map((item) => {
+      // Handle both wrapped and direct vehicle objects
       const v = item.vehicle || item;
+      const lastServiceResult = getLastServiceDate(v.maintenanceRecords);
+      
+      console.log('Processing vehicle:', v); // Debug log
+      
       return {
         id: v.id || "",
         name: v.name || "غير معروف",
         model: v.model || "",
         licensePlate: v.license || "",
-        lastService: getLastServiceDate(v.maintenanceRecords),
+        lastService: lastServiceResult,
         year: v.year,
         color: v.color,
       };
     });
+    
+    console.log('Transformed vehicles:', transformed); // Debug log
+    return transformed;
   }, [apiVehicles]);
 
   // Filter by search term
@@ -90,19 +115,51 @@ export default function Vehicles() {
 
         {error && <p className="text-red-500 text-center">{error}</p>}
 
-        {!loading && !error && filteredVehicles.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {filteredVehicles.map((vehicle) => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                onVehicleUpdated={refetch}
+        {!loading && !error && transformedVehicles.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              {searchTerm 
+                ? filteredVehicles.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.id}
+                      vehicle={vehicle}
+                      onVehicleUpdated={refetch}
+                    />
+                  ))
+                : transformedVehicles.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.id}
+                      vehicle={vehicle}
+                      onVehicleUpdated={refetch}
+                    />
+                  ))
+              }
+            </div>
+            
+            {/* Show pagination only when not searching */}
+            {!searchTerm && (
+              <VehiclesPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalElements={totalElements}
+                pageSize={pageSize}
+                onPageChange={goToPage}
+                onPageSizeChange={changePageSize}
+                loading={loading}
               />
-            ))}
+            )}
+          </>
+        )}
+
+        {!loading && !error && searchTerm && filteredVehicles.length === 0 && transformedVehicles.length > 0 && (
+          <div className="text-center py-12">
+            <Car className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">لا توجد نتائج</h3>
+            <p className="text-gray-500">لم يتم العثور على مركبات تطابق البحث</p>
           </div>
         )}
 
-        {!loading && !error && filteredVehicles.length === 0 && (
+        {!loading && !error && transformedVehicles.length === 0 && (
           <div className="text-center py-12">
             <Car className="w-16 h-16 text-gray-500 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">لا توجد مركبات</h3>

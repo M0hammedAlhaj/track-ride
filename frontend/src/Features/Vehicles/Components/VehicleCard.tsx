@@ -70,13 +70,13 @@ const VehicleCard: React.FC<VehicleCardProps> = ({ vehicle, onVehicleUpdated }: 
           <div className="flex items-center justify-between text-gray-400 text-sm">
             <span>
               آخر صيانة:{" "}
-              {vehicle.lastService
+              {vehicle.lastService && vehicle.lastService !== "لا يوجد صيانات"
                 ? new Date(vehicle.lastService).toLocaleDateString("ar-EG", {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
                   })
-                : "لا يوجد"}
+                : "لا يوجد صيانات"}
             </span>
           </div>
         </div>

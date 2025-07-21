@@ -39,3 +39,7 @@ export const delete_vehicle = async (vehicleId: string) => {
     throw error
   }
 }
+
+export const get_vehicles_with_pagination = (page: number = 1, size: number = 5) => {
+  return axiosWithAuth.get(`/users/vehicles/latest-maintenance?size=${size}&page=${page}`);
+}
