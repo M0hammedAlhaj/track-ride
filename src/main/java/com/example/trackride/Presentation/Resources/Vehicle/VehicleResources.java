@@ -6,17 +6,17 @@ import lombok.Getter;
 
 @Getter
 public class VehicleResources {
-    private String id;
+    private final String id;
 
-    private String license;
+    private final String license;
 
-    private String model;
+    private final String model;
 
-    private String color;
+    private final String color;
 
-    private String year;
+    private final String year;
 
-    private String name;
+    private final String name;
 
     private MaintenanceRecordCollection maintenanceRecords;
 
