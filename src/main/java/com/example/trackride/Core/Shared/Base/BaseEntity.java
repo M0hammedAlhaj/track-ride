@@ -29,8 +29,8 @@ public abstract class BaseEntity {
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
-        if (this instanceof MaintenanceRecord) {
-            ((MaintenanceRecord) this).setStatus(MaintenanceStatus.UP_COMING);
+        if (this instanceof MaintenanceRecord maintenanceRecord) {
+            maintenanceRecord.setStatus(MaintenanceStatus.UP_COMING);
         }
     }
 

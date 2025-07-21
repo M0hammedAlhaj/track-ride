@@ -108,6 +108,7 @@ public class JpaVehicleRepository implements VehicleRepository {
                         v.year AS vehicle_year,
                         v.created_at AS vehicle_created_at,
                         v.updated_at AS vehicle_updated_at,
+                        v.owner_id As owner_id,
                 
                         mr.id AS maintenance_id,
                         mr.is_notify AS maintenance_is_notify,
@@ -118,10 +119,10 @@ public class JpaVehicleRepository implements VehicleRepository {
                         mr.status AS maintenance_status,
                         mr.created_at AS maintenance_created_at,
                         mr.updated_at AS maintenance_updated_at,
-                        mr.vehicle_id AS vehicle_id
-                    FROM vehicle v
+                        mr.vehicle_id AS maintenance_vehicle_id
+                    FROM vehicles v
                     LEFT JOIN LATERAL (
-                        SELECT * FROM maintenance_record mr
+                        SELECT * FROM maintenance_records mr
                         WHERE mr.vehicle_id = v.id
                         ORDER BY mr.created_at DESC
                         LIMIT 1

@@ -54,7 +54,7 @@ public class JpaUserRepository implements UserRepository {
     @Override
     public boolean existById(UUID id) {
         return !entityManager.createQuery(
-                        "SELECT 1 FROM User u WHERE u.email = :id", Integer.class)
+                        "SELECT 1 FROM User u WHERE u.id = :id", Integer.class)
                 .setParameter("id", id)
                 .setMaxResults(1)
                 .getResultList()

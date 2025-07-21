@@ -41,11 +41,9 @@ import java.util.Set;
                         @FieldResult(name = "description", column = "maintenance_description"),
                         @FieldResult(name = "status", column = "maintenance_status"),
                         @FieldResult(name = "createdAt", column = "maintenance_created_at"),
-                        @FieldResult(name = "updatedAt", column = "maintenance_updated_at"),
-                        @FieldResult(name = "vehicle", column = "vehicle_id")
+                        @FieldResult(name = "updatedAt", column = "maintenance_updated_at")
                 })
-        }
-)
+        })
 public class Vehicle extends BaseEntity {
 
     private String license;
