@@ -13,11 +13,15 @@ import java.util.stream.Collectors;
 @Getter
 public class GetVehiclesWithLatestMaintenanceResponse {
     private final VehicleCollection data;
+    private final String message;
+    private final long totalElements;
+    private final int totalPages;
+    private final int currentPage;
+    private final int size;
+    private final boolean first;
+    private final boolean last;
 
-    private final String Message;
-
-    public GetVehiclesWithLatestMaintenanceResponse(List<VehicleMaintenanceDTO> dto, String Message) {
-
+    public GetVehiclesWithLatestMaintenanceResponse(List<VehicleMaintenanceDTO> dto, Long totalElements, int currentPage, int size, String message) {
         this.data = new VehicleCollection(dto.stream().map((e) -> {
             Vehicle vehicle = e.vehicle();
             if (e.maintenanceRecord() != null) {
@@ -27,7 +31,14 @@ public class GetVehiclesWithLatestMaintenanceResponse {
             }
             return vehicle;
         }).collect(Collectors.toSet()));
-        this.Message = Message;
+        
+        this.message = message;
+        this.totalElements = totalElements;
+        this.totalPages = (int) Math.ceil((double) totalElements / size);
+        this.currentPage = currentPage;
+        this.size = size;
+        this.first = currentPage == 1;
+        this.last = currentPage >= this.totalPages;
     }
 }
 

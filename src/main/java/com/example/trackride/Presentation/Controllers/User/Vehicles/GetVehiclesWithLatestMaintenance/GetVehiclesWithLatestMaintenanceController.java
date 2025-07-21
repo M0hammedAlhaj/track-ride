@@ -2,6 +2,7 @@ package com.example.trackride.Presentation.Controllers.User.Vehicles.GetVehicles
 
 import com.example.trackride.Application.Vehicle.DTO.VehicleMaintenanceDTO;
 import com.example.trackride.Application.Vehicle.UseCase.GetVehiclesWithLatestMaintenance;
+import com.example.trackride.Application.Vehicle.UseCase.CountVehiclesByOwnerUseCase;
 import com.example.trackride.Infrastructures.Security.Auth.UserAuthentication;
 import com.example.trackride.Presentation.Controllers.User.UserBaseController;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class GetVehiclesWithLatestMaintenanceController {
 
     private final GetVehiclesWithLatestMaintenance useCase;
+    private final CountVehiclesByOwnerUseCase countVehiclesByOwnerUseCase;
 
     @GetMapping("/latest-maintenance")
     public ResponseEntity<?> invoke(@RequestParam int page,
@@ -30,8 +32,11 @@ public class GetVehiclesWithLatestMaintenanceController {
             return ResponseEntity.badRequest()
                     .body("Invalid pagination parameters: page must be >= 1 and size between 1 and 100");
         }
-        List<VehicleMaintenanceDTO> dto = useCase.execute(UUID.fromString(userAuthentication.getId()), page, size);
+        
+        UUID userId = UUID.fromString(userAuthentication.getId());
+        List<VehicleMaintenanceDTO> dto = useCase.execute(userId, page, size);
+        Long totalElements = countVehiclesByOwnerUseCase.execute(userAuthentication.getId());
 
-        return ResponseEntity.ok(new GetVehiclesWithLatestMaintenanceResponse(dto, "Retrieve Successful"));
+        return ResponseEntity.ok(new GetVehiclesWithLatestMaintenanceResponse(dto, totalElements, page, size, "Retrieve Successful"));
     }
 }
