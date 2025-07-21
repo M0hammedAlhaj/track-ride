@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/users/assign-vehicle").authenticated()
                         .requestMatchers("/api/v1/users/assign-maintenance").authenticated()
-                        .requestMatchers("/api/v1/users/vehicles").authenticated()
+                        .requestMatchers("/api/v1/users/vehicles/*").authenticated()
                         .requestMatchers("/api/v1/users/last-Maintenance").authenticated()
                         .requestMatchers("/api/v1/vehicles/*").authenticated()
                         .requestMatchers("/api/v1/maintenance-records/*").authenticated()

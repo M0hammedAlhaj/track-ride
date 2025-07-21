@@ -1,5 +1,7 @@
 package com.example.trackride.Infrastructures.Jpa.Vehicle;
 
+import com.example.trackride.Application.Vehicle.DTO.VehicleMaintenanceDTO;
+import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import com.example.trackride.Core.Vehicle.Entity.Vehicle;
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
@@ -8,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -94,5 +93,56 @@ public class JpaVehicleRepository implements VehicleRepository {
                         , Vehicle.class)
                 .setParameter("ownerId", ownerId)
                 .getResultList().stream().findFirst();
+    }
+
+    @Override
+    @Transactional
+    public List<VehicleMaintenanceDTO> findVehiclesWithLatestMaintenanceByOwnerIdAndPagination(UUID ownerId, int page, int size) {
+        String sql = """
+                    SELECT
+                        v.id AS vehicle_id,
+                        v.license AS vehicle_license,
+                        v.model AS vehicle_model,
+                        v.color AS vehicle_color,
+                        v.name AS vehicle_name,
+                        v.year AS vehicle_year,
+                        v.created_at AS vehicle_created_at,
+                        v.updated_at AS vehicle_updated_at,
+                
+                        mr.id AS maintenance_id,
+                        mr.is_notify AS maintenance_is_notify,
+                        mr.type AS maintenance_type,
+                        mr.reminder AS maintenance_reminder,
+                        mr.price AS maintenance_price,
+                        mr.description AS maintenance_description,
+                        mr.status AS maintenance_status,
+                        mr.created_at AS maintenance_created_at,
+                        mr.updated_at AS maintenance_updated_at,
+                        mr.vehicle_id AS vehicle_id
+                    FROM vehicle v
+                    LEFT JOIN LATERAL (
+                        SELECT * FROM maintenance_record mr
+                        WHERE mr.vehicle_id = v.id
+                        ORDER BY mr.created_at DESC
+                        LIMIT 1
+                    ) mr ON true
+                    WHERE v.owner_id = :ownerId
+                    ORDER BY v.updated_at DESC
+                    LIMIT :limit OFFSET :offset
+                """;
+        @SuppressWarnings("unchecked")
+        List<Object[]> rows  = em.createNativeQuery(sql, "VehicleWithLatestMaintenanceMapping")
+                .setParameter("ownerId", ownerId)
+                .setParameter("limit", size)
+                .setParameter("offset", (page - 1) * size)
+                .getResultList();
+
+        return rows.stream()
+                .map(row -> {
+                    Vehicle vehicle = (Vehicle) row[0];
+                    MaintenanceRecord maintenanceRecord = (MaintenanceRecord) row[1];
+                    return new VehicleMaintenanceDTO(vehicle, maintenanceRecord);
+                })
+                .toList();
     }
 }

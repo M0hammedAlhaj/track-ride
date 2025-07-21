@@ -52,6 +52,16 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
+    public boolean existById(UUID id) {
+        return !entityManager.createQuery(
+                        "SELECT 1 FROM User u WHERE u.email = :id", Integer.class)
+                .setParameter("id", id)
+                .setMaxResults(1)
+                .getResultList()
+                .isEmpty();
+    }
+
+    @Override
     @Transactional
     public Optional<User> findById(UUID id) {
         return entityManager.createQuery("SELECT u FROM User u where u.id=:id", User.class)

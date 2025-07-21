@@ -15,7 +15,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public abstract class BaseEntity {
-
     @Id
     @GeneratedValue
     @UuidGenerator
@@ -26,7 +25,6 @@ public abstract class BaseEntity {
 
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
-
 
     @PrePersist
     public void prePersist() {
@@ -40,5 +38,4 @@ public abstract class BaseEntity {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }

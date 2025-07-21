@@ -14,4 +14,6 @@ public interface UserRepository extends BaseRepository<User> {
     Optional<User> findUserByIdWithVehicles(UUID userId);
 
     boolean existByEmail(String email);
+
+    boolean existById(UUID id);
 }

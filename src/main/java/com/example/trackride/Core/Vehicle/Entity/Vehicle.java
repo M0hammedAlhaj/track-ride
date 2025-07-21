@@ -19,6 +19,33 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@SqlResultSetMapping(
+        name = "VehicleWithLatestMaintenanceMapping",
+        entities = {
+                @EntityResult(entityClass = Vehicle.class, fields = {
+                        @FieldResult(name = "id", column = "vehicle_id"),
+                        @FieldResult(name = "license", column = "vehicle_license"),
+                        @FieldResult(name = "model", column = "vehicle_model"),
+                        @FieldResult(name = "color", column = "vehicle_color"),
+                        @FieldResult(name = "name", column = "vehicle_name"),
+                        @FieldResult(name = "year", column = "vehicle_year"),
+                        @FieldResult(name = "createdAt", column = "vehicle_created_at"),
+                        @FieldResult(name = "updatedAt", column = "vehicle_updated_at")
+                }),
+                @EntityResult(entityClass = MaintenanceRecord.class, fields = {
+                        @FieldResult(name = "id", column = "maintenance_id"),
+                        @FieldResult(name = "isNotify", column = "maintenance_is_notify"),
+                        @FieldResult(name = "type", column = "maintenance_type"),
+                        @FieldResult(name = "reminder", column = "maintenance_reminder"),
+                        @FieldResult(name = "price", column = "maintenance_price"),
+                        @FieldResult(name = "description", column = "maintenance_description"),
+                        @FieldResult(name = "status", column = "maintenance_status"),
+                        @FieldResult(name = "createdAt", column = "maintenance_created_at"),
+                        @FieldResult(name = "updatedAt", column = "maintenance_updated_at"),
+                        @FieldResult(name = "vehicle", column = "vehicle_id")
+                })
+        }
+)
 public class Vehicle extends BaseEntity {
 
     private String license;
@@ -35,7 +62,7 @@ public class Vehicle extends BaseEntity {
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private User owner;
 
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "vehicle", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<MaintenanceRecord> maintenanceRecords;
 
     public boolean belongsTo(User user) {
