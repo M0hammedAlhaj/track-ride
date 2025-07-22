@@ -1,5 +1,5 @@
  import { useEffect, useState } from "react";
-import { upconing_maintenance } from "../api";
+import { count_upcoming_maintenance } from "../api";
 
 export function useFetchUpcoming() {
   
@@ -10,18 +10,18 @@ export function useFetchUpcoming() {
   useEffect(() => {
     async function loadUpcomingDate() {
       try {
-        const response = await upconing_maintenance();
-        console.log('Upcoming maintenance API response:', response.data); // Debug log
+        const response = await count_upcoming_maintenance();
+        console.log('Upcoming maintenance count API response:', response.data); // Debug log
         
-        // Handle different possible response structures
-        const count = response.data?.data ?? response.data?.count ?? 0;
+        // The count endpoint should return { data: number, message: string }
+        const count = response.data?.data ?? 0;
         console.log('Extracted count:', count); // Debug log
         
         setUpcomingDate(typeof count === 'number' ? count : 0);
         setError(null);
       } catch (err) {
-        console.error('Error fetching upcoming maintenance:', err); // Debug log
-        setError("تعذر تحميل الصيانة القادمة");
+        console.error('Error fetching upcoming maintenance count:', err); // Debug log
+        setError("تعذر تحميل عدد الصيانة القادمة");
         setUpcomingDate(0); // Set to 0 on error
       } finally {
         setLoading(false);

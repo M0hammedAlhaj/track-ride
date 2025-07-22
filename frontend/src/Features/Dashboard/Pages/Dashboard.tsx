@@ -67,8 +67,7 @@ interface UpcomingMaintenanceRecord {
   reminderDate: string
   vehicleId: string
   vehicleName: string
-  vehicleYear: string
-  licensePlate: string
+  vehicleLicense: string
   description: string
   price: number
   status: string
@@ -374,7 +373,6 @@ function UpcomingMaintenanceTable({
                 <TableRow className="border-gray-600 hover:bg-gray-700/50">
                   <TableHead className="text-gray-300 text-right">اسم المركبة</TableHead>
                   <TableHead className="text-gray-300 text-right">رقم اللوحة</TableHead>
-                  <TableHead className="text-gray-300 text-right">السنة</TableHead>
                   <TableHead className="text-gray-300 text-right">نوع الصيانة</TableHead>
                   <TableHead className="text-gray-300 text-right">تمت الصيانة</TableHead>
                   <TableHead className="text-gray-300 text-right">موعد التذكير</TableHead>
@@ -385,8 +383,7 @@ function UpcomingMaintenanceTable({
                 {data.map((item) => (
                   <TableRow key={item.id} className="border-gray-600 hover:bg-gray-700/30">
                     <TableCell className="text-white font-medium text-right">{item.vehicleName}</TableCell>
-                    <TableCell className="text-gray-300 font-mono text-right">{item.licensePlate}</TableCell>
-                    <TableCell className="text-gray-300 text-right">{item.vehicleYear}</TableCell>
+                    <TableCell className="text-gray-300 font-mono text-right">{item.vehicleLicense}</TableCell>
                     <TableCell className="text-white font-medium text-right">
                       {getTypeInArabic(item.type)}
                     </TableCell>
