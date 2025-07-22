@@ -17,3 +17,6 @@ export const count_overdue_maintenance = () =>
 
 export const total_maintenance_cost = () =>
     axiosWithAuth.get("/maintenance-records/total-cost");
+
+export const last_month_maintenance_cost = () =>
+    axiosWithAuth.get("/maintenance-records/last-month-cost");

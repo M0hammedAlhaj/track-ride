@@ -19,4 +19,6 @@ public interface MaintenanceRecordRepository extends BaseRepository<MaintenanceR
     Long countOverdueMaintenanceRecordsByOwnerId(UUID ownerId);
 
     BigDecimal calculateTotalMaintenanceByOwnerId(UUID ownerId);
+
+    BigDecimal calculateLastMonthMaintenanceCostByOwnerId(UUID ownerId);
 }

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -103,6 +104,27 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
     public BigDecimal calculateTotalMaintenanceByOwnerId(UUID ownerId) {
         return em.createQuery("SELECT sum (m.price) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId", BigDecimal.class)
                 .setParameter("ownerId", ownerId)
+                .getSingleResult();
+    }
+
+    @Override
+    public BigDecimal calculateLastMonthMaintenanceCostByOwnerId(UUID ownerId) {
+        LocalDate now = LocalDate.now();
+        LocalDate lastMonth = now.minusMonths(1);
+
+        LocalDateTime startOfLastMonth = lastMonth.withDayOfMonth(1).atStartOfDay();
+
+        LocalDateTime endOfLastMonth = lastMonth.withDayOfMonth(lastMonth.lengthOfMonth())
+                .atTime(23, 59, 59);
+
+
+        return em.createQuery(
+                        "SELECT COALESCE(SUM(m.price), 0) FROM MaintenanceRecord m " +
+                        "WHERE m.vehicle.owner.id = :ownerId " +
+                        "AND m.createdAt BETWEEN :startDate AND :endDate", BigDecimal.class)
+                .setParameter("ownerId", ownerId)
+                .setParameter("startDate", startOfLastMonth)
+                .setParameter("endDate", endOfLastMonth)
                 .getSingleResult();
     }
 }

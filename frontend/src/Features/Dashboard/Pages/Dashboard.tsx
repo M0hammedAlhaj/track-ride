@@ -29,6 +29,7 @@ import { useCountOverdue } from "../hooks/useCountOverdue"
 import { useRecentActivity } from "../hooks/useRecentActivity"
 import { useMaintenanceTypes } from "../../MaintenanceTypes/hooks/useMaintenanceTypes"
 import { useTotalCost } from "../hooks/useTotalCost"
+import { useLastMonthCost } from "../hooks/useLastMonthCost"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -140,10 +141,10 @@ const dashboardData: DashboardData = {
 // Total Cost Card Component
 function TotalCostCard() {
   const { totalCost, loading, error } = useTotalCost()
+  const { lastMonthCost, loading: lastMonthLoading, error: lastMonthError } = useLastMonthCost()
   
   // Fallback values for other metrics (keep same as before)
   const monthlyAverage = 208.46 // Will come from API later
-  const lastMonthCost = 195.30 // Will come from API later
   
   const costChange = totalCost > lastMonthCost ? 'increase' : 'decrease'
   const costPercentage = lastMonthCost > 0 ? Math.abs(((totalCost - lastMonthCost) / lastMonthCost) * 100).toFixed(1) : 0
@@ -184,15 +185,19 @@ function TotalCostCard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-gray-400 text-sm">الشهر الماضي</p>
-                  <p className="text-white font-semibold">{lastMonthCost.toFixed(2)} دينار</p>
-                  <div className={`flex items-center mt-1 ${costChange === 'increase' ? 'text-red-400' : 'text-green-400'}`}>
-                    {costChange === 'increase' ? (
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                    ) : (
-                      <TrendingUp className="w-3 h-3 mr-1 rotate-180" />
-                    )}
-                    <span className="text-xs">{costPercentage}%</span>
-                  </div>
+                  <p className="text-white font-semibold">
+                    {lastMonthLoading ? "جاري التحميل..." : lastMonthError ? "خطأ" : `${lastMonthCost.toFixed(2)} دينار`}
+                  </p>
+                  {!lastMonthLoading && !lastMonthError && (
+                    <div className={`flex items-center mt-1 ${costChange === 'increase' ? 'text-red-400' : 'text-green-400'}`}>
+                      {costChange === 'increase' ? (
+                        <TrendingUp className="w-3 h-3 mr-1" />
+                      ) : (
+                        <TrendingUp className="w-3 h-3 mr-1 rotate-180" />
+                      )}
+                      <span className="text-xs">{costPercentage}%</span>
+                    </div>
+                  )}
                 </div>
                 <div className={`w-10 h-10 ${costChange === 'increase' ? 'bg-red-500/20' : 'bg-green-500/20'} rounded-lg flex items-center justify-center`}>
                   {costChange === 'increase' ? (
