@@ -28,6 +28,7 @@ import { useUpcomingMaintenance } from "../hooks/useUpcomingMaintenance"
 import { useCountOverdue } from "../hooks/useCountOverdue"
 import { useRecentActivity } from "../hooks/useRecentActivity"
 import { useMaintenanceTypes } from "../../MaintenanceTypes/hooks/useMaintenanceTypes"
+import { getMaintenanceTypeInArabic } from "../../MaintenanceTypes/api"
 import { useTotalCost } from "../hooks/useTotalCost"
 import { useLastMonthCost } from "../hooks/useLastMonthCost"
 import { useCostDetails } from "../hooks/useCostDetails"
@@ -147,16 +148,6 @@ function TotalCostCard() {
   
   const costChange = totalCost > lastMonthCost ? 'increase' : 'decrease'
   const costPercentage = lastMonthCost > 0 ? Math.abs(((totalCost - lastMonthCost) / lastMonthCost) * 100).toFixed(1) : 0
-
-  // Helper function to get Arabic names for maintenance types
-  const getMaintenanceTypeInArabic = (type: string) => {
-    const typeMap: { [key: string]: string } = {
-      'OIL_CHANGE': 'تغيير الزيت',
-      'TRANSMISSION_SERVICE': 'صيانة عامة',
-      'BRAKE_INSPECTION': 'فحص الفرامل'
-    };
-    return typeMap[type] || type;
-  };
 
   return (
     <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
@@ -503,7 +494,7 @@ function RecentActivityList({ data, loading, error }: { data: RecentActivity[], 
                   </div>
                   <div>
                     <p className="text-white font-medium">{activity.vehicleName}</p>
-                    <p className="text-gray-400 text-sm">{activity.maintenanceType}</p>
+                    <p className="text-gray-400 text-sm">{getMaintenanceTypeInArabic(activity.maintenanceType)}</p>
                   </div>
                 </div>
                 <div className="text-left">

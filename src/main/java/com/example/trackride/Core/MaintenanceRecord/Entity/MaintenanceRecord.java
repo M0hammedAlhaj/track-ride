@@ -41,4 +41,5 @@ public class MaintenanceRecord extends BaseEntity {
     public void assignVehicle(Vehicle vehicle) {
         this.vehicle = vehicle;
     }
+
 }
