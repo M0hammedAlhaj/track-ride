@@ -32,6 +32,7 @@ import { getMaintenanceTypeInArabic } from "../../MaintenanceTypes/api"
 import { useTotalCost } from "../hooks/useTotalCost"
 import { useLastMonthCost } from "../hooks/useLastMonthCost"
 import { useCostDetails } from "../hooks/useCostDetails"
+import { useUpdateMaintenanceStatus } from "../hooks/useUpdateMaintenanceStatus"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -336,21 +337,32 @@ function UpcomingMaintenanceTable({
   data, 
   loading = false, 
   error = null,
-  getTypeInArabic
+  getTypeInArabic,
+  onStatusUpdate,
+  updateLoading = false
 }: { 
   data: UpcomingMaintenanceRecord[]
   loading?: boolean
   error?: string | null
   getTypeInArabic: (type: string) => string
+  onStatusUpdate?: (recordId: string, status: 'COMPLETED' | 'CANCELED') => Promise<void>
+  updateLoading?: boolean
 }) {
-  const handleComplete = (recordId: string) => {
-    console.log('Complete maintenance:', recordId)
-    // TODO: Implement complete maintenance API call
+  const [updatingRecord, setUpdatingRecord] = useState<string | null>(null);
+  const handleComplete = async (recordId: string) => {
+    if (onStatusUpdate) {
+      setUpdatingRecord(recordId);
+      await onStatusUpdate(recordId, 'COMPLETED');
+      setUpdatingRecord(null);
+    }
   }
 
-  const handleCancel = (recordId: string) => {
-    console.log('Cancel maintenance:', recordId)
-    // TODO: Implement cancel maintenance API call
+  const handleCancel = async (recordId: string) => {
+    if (onStatusUpdate) {
+      setUpdatingRecord(recordId);
+      await onStatusUpdate(recordId, 'CANCELED');
+      setUpdatingRecord(null);
+    }
   }
 
   return (
@@ -414,19 +426,21 @@ function UpcomingMaintenanceTable({
                         <Button
                           size="sm"
                           onClick={() => handleComplete(item.id)}
-                          className="bg-green-600 hover:bg-green-700 text-white transition-all duration-300 hover:scale-105"
+                          disabled={updatingRecord === item.id}
+                          className="bg-green-600 hover:bg-green-700 text-white transition-all duration-300 hover:scale-105 disabled:opacity-50"
                         >
                           <CheckCircle className="w-4 h-4 mr-1" />
-                          تمت
+                          {updatingRecord === item.id ? "جاري التحديث..." : "تمت"}
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => handleCancel(item.id)}
-                          className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300 hover:scale-105"
+                          disabled={updatingRecord === item.id}
+                          className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white transition-all duration-300 hover:scale-105 disabled:opacity-50"
                         >
                           <AlertTriangle className="w-4 h-4 mr-1" />
-                          إلغاء
+                          {updatingRecord === item.id ? "جاري التحديث..." : "إلغاء"}
                         </Button>
                       </div>
                     </TableCell>
@@ -526,10 +540,19 @@ export default function Dashboard() {
   const {count,loading,error  } = useCountVehicles()
   const { upcomingDate, loading: upcomingLoading, error: upcomingError } =useFetchUpcoming()
   const { vehicle, loading:recentLoading, error:recentError } = useRecentVehicle();
-  const { data: upcomingMaintenanceData, loading: upcomingMaintenanceLoading, error: upcomingMaintenanceError } = useUpcomingMaintenance();
+  const { data: upcomingMaintenanceData, loading: upcomingMaintenanceLoading, error: upcomingMaintenanceError, refetch: refetchUpcomingMaintenance } = useUpcomingMaintenance();
   const { count: overdueCount, loading: overdueLoading, error: overdueError } = useCountOverdue();
   const { activities: recentActivity, loading: recentActivityLoading, error: recentActivityError } = useRecentActivity();
   const { getTypeInArabic } = useMaintenanceTypes();
+  const { updateStatus, loading: updateLoading, error: updateError } = useUpdateMaintenanceStatus();
+
+  const handleStatusUpdate = async (recordId: string, status: 'COMPLETED' | 'CANCELED') => {
+    const success = await updateStatus(recordId, status);
+    if (success) {
+      // Refresh the upcoming maintenance data
+      await refetchUpcomingMaintenance();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white" dir="rtl">
@@ -542,6 +565,13 @@ export default function Dashboard() {
           </h1>
           <p className="text-gray-400">نظرة شاملة على حالة أسطولك وجدولة الصيانة</p>
         </div>
+
+        {/* Error Display */}
+        {updateError && (
+          <div className="mb-4 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+            <p className="text-red-400 text-center">{updateError}</p>
+          </div>
+        )}
 
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -592,6 +622,8 @@ export default function Dashboard() {
             loading={upcomingMaintenanceLoading}
             error={upcomingMaintenanceError}
             getTypeInArabic={getTypeInArabic}
+            onStatusUpdate={handleStatusUpdate}
+            updateLoading={updateLoading}
           />
         </div>
 
