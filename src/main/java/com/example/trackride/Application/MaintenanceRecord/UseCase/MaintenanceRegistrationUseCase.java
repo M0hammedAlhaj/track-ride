@@ -12,6 +12,7 @@ import com.example.trackride.Core.Vehicle.Entity.Vehicle;
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class MaintenanceRegistrationUseCase {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public MaintenanceRecord execute(MaintenanceRecordRegistrationDTO registrationDTO) {
         MaintenanceRecord maintenanceRecord = factory.create(registrationDTO.maintenanceType(),
                 registrationDTO.reminder(),

@@ -2,12 +2,12 @@ package com.example.trackride.Application.MaintenanceRecord.UseCase;
 
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecordRepository;
-import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ public class LastMaintenanceRecordUseCase {
     private final VehicleRepository vehicleRepository;
     private final MaintenanceRecordRepository maintenanceRecordRepository;
 
+    @Transactional
     public List<MaintenanceRecord> execute(String userId) {
         var user = userRepository.findUserByIdWithVehicles(UUID.fromString(userId))
                 .orElseThrow(() -> new ResourceNotFoundException(userId));

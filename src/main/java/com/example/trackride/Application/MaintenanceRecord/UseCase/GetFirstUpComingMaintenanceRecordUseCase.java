@@ -9,6 +9,7 @@ import com.example.trackride.Core.User.Entity.User;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class GetFirstUpComingMaintenanceRecordUseCase {
     private final UserRepository userRepository;
     private final MaintenanceRecordRepository maintenanceRecordRepository;
 
+    @Transactional
     public List<MaintenanceRecord> execute(GetFirstUpComingMaintenanceRecordDTO dto) {
         User user = userRepository.findById(dto.userId())
                 .orElseThrow(() -> new ResourceNotFoundException(dto.userId().toString()));

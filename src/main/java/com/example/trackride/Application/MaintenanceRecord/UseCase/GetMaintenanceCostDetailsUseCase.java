@@ -7,6 +7,7 @@ import com.example.trackride.Core.User.Exception.Auth.UserAccessException;
 import com.example.trackride.Core.User.Repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -18,6 +19,7 @@ public class GetMaintenanceCostDetailsUseCase {
     private final MaintenanceRecordRepository maintenanceRecordRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public Map<MaintenanceType, BigDecimal> execute(UUID ownerId) {
         if (!userRepository.existById(ownerId)) {
             throw new UserAccessException("User don't have access");
