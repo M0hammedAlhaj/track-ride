@@ -20,3 +20,6 @@ export const total_maintenance_cost = () =>
 
 export const last_month_maintenance_cost = () =>
     axiosWithAuth.get("/maintenance-records/last-month-cost");
+
+export const maintenance_cost_details = () =>
+    axiosWithAuth.get("/maintenance-records/cost-details");

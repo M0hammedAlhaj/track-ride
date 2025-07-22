@@ -3,6 +3,7 @@ package com.example.trackride.Infrastructures.Jpa.MaintenanceRecord;
 import com.example.trackride.Core.MaintenanceRecord.Entity.MaintenanceRecord;
 import com.example.trackride.Core.MaintenanceRecord.Repository.MaintenanceRecordRepository;
 import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceStatus;
+import com.example.trackride.Core.MaintenanceRecord.model.MaintenanceType;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
@@ -12,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Repository
 @AllArgsConstructor
@@ -102,7 +101,7 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
 
     @Override
     public BigDecimal calculateTotalMaintenanceByOwnerId(UUID ownerId) {
-        return em.createQuery("SELECT sum (m.price) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId", BigDecimal.class)
+        return em.createQuery("SELECT COALESCE(SUM(m.price),0) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId", BigDecimal.class)
                 .setParameter("ownerId", ownerId)
                 .getSingleResult();
     }
@@ -126,5 +125,24 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
                 .setParameter("startDate", startOfLastMonth)
                 .setParameter("endDate", endOfLastMonth)
                 .getSingleResult();
+    }
+
+    @Override
+    public Map<MaintenanceType, BigDecimal> calculateMaintenanceDetailsByOwnerId(UUID ownerId) {
+        List<Object[]> results = em.createQuery(
+                        "SELECT m.type, COALESCE(SUM(m.price), 0) " +
+                        "FROM MaintenanceRecord m " +
+                        "WHERE m.vehicle.owner.id = :ownerId " +
+                        "GROUP BY m.type", Object[].class)
+                .setParameter("ownerId", ownerId)
+                .getResultList();
+
+        Map<MaintenanceType, BigDecimal> costDetails = new HashMap<>();
+        for (Object[] row : results) {
+            MaintenanceType type = (MaintenanceType) row[0];
+            BigDecimal total = (BigDecimal) row[1];
+            costDetails.put(type, total);
+        }
+        return costDetails;
     }
 }

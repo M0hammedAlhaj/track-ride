@@ -30,6 +30,7 @@ import { useRecentActivity } from "../hooks/useRecentActivity"
 import { useMaintenanceTypes } from "../../MaintenanceTypes/hooks/useMaintenanceTypes"
 import { useTotalCost } from "../hooks/useTotalCost"
 import { useLastMonthCost } from "../hooks/useLastMonthCost"
+import { useCostDetails } from "../hooks/useCostDetails"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -142,12 +143,23 @@ const dashboardData: DashboardData = {
 function TotalCostCard() {
   const { totalCost, loading, error } = useTotalCost()
   const { lastMonthCost, loading: lastMonthLoading, error: lastMonthError } = useLastMonthCost()
+  const { costDetails, loading: costDetailsLoading, error: costDetailsError } = useCostDetails()
   
   // Fallback values for other metrics (keep same as before)
   const monthlyAverage = 208.46 // Will come from API later
   
   const costChange = totalCost > lastMonthCost ? 'increase' : 'decrease'
   const costPercentage = lastMonthCost > 0 ? Math.abs(((totalCost - lastMonthCost) / lastMonthCost) * 100).toFixed(1) : 0
+
+  // Helper function to get Arabic names for maintenance types
+  const getMaintenanceTypeInArabic = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      'OIL_CHANGE': 'تغيير الزيت',
+      'TRANSMISSION_SERVICE': 'صيانة عامة',
+      'BRAKE_INSPECTION': 'فحص الفرامل'
+    };
+    return typeMap[type] || type;
+  };
 
   return (
     <Card className="bg-gray-800/50 border-gray-700/50 backdrop-blur-sm">
@@ -213,28 +225,39 @@ function TotalCostCard() {
           {/* Cost Breakdown */}
           <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-700">
             <h3 className="text-white font-medium mb-3">تفاصيل التكلفة</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">تغيير الزيت</span>
-                <span className="text-white">450.25 دينار</span>
+            {costDetailsLoading ? (
+              <div className="space-y-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex justify-between text-sm animate-pulse">
+                    <div className="h-4 bg-gray-600 rounded w-20"></div>
+                    <div className="h-4 bg-gray-600 rounded w-16"></div>
+                  </div>
+                ))}
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">فحص الفرامل</span>
-                <span className="text-white">320.50 دينار</span>
+            ) : costDetailsError ? (
+              <div className="text-center py-4">
+                <p className="text-red-400 text-sm">خطأ في تحميل تفاصيل التكلفة</p>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">صيانة عامة</span>
-                <span className="text-white">480.00 دينار</span>
-              </div>
-              <div className="border-t border-gray-600 pt-2 mt-2">
-                <div className="flex justify-between font-medium">
-                  <span className="text-emerald-400">الإجمالي</span>
-                  <span className="text-emerald-400">
-                    {loading ? "جاري التحميل..." : error ? "خطأ" : `${totalCost.toFixed(2)} دينار`}
-                  </span>
+            ) : (
+              <div className="space-y-2">
+                {Object.entries(costDetails).map(([type, cost]) => (
+                  cost !== undefined && (
+                    <div key={type} className="flex justify-between text-sm">
+                      <span className="text-gray-400">{getMaintenanceTypeInArabic(type)}</span>
+                      <span className="text-white">{cost.toFixed(2)} دينار</span>
+                    </div>
+                  )
+                ))}
+                <div className="border-t border-gray-600 pt-2 mt-2">
+                  <div className="flex justify-between font-medium">
+                    <span className="text-emerald-400">الإجمالي</span>
+                    <span className="text-emerald-400">
+                      {loading ? "جاري التحميل..." : error ? "خطأ" : `${totalCost.toFixed(2)} دينار`}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </CardContent>
