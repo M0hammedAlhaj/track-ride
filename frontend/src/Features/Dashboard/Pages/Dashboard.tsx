@@ -145,9 +145,6 @@ function TotalCostCard() {
   const { lastMonthCost, loading: lastMonthLoading, error: lastMonthError } = useLastMonthCost()
   const { costDetails, loading: costDetailsLoading, error: costDetailsError } = useCostDetails()
   
-  // Fallback values for other metrics (keep same as before)
-  const monthlyAverage = 208.46 // Will come from API later
-  
   const costChange = totalCost > lastMonthCost ? 'increase' : 'decrease'
   const costPercentage = lastMonthCost > 0 ? Math.abs(((totalCost - lastMonthCost) / lastMonthCost) * 100).toFixed(1) : 0
 
@@ -180,19 +177,7 @@ function TotalCostCard() {
           </div>
 
           {/* Statistics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-700">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-sm">المتوسط الشهري</p>
-                  <p className="text-white font-semibold">{monthlyAverage.toFixed(2)} دينار</p>
-                </div>
-                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-blue-400" />
-                </div>
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 gap-4">
             <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between">
                 <div>
