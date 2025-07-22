@@ -28,6 +28,7 @@ import { useUpcomingMaintenance } from "../hooks/useUpcomingMaintenance"
 import { useCountOverdue } from "../hooks/useCountOverdue"
 import { useRecentActivity } from "../hooks/useRecentActivity"
 import { useMaintenanceTypes } from "../../MaintenanceTypes/hooks/useMaintenanceTypes"
+import { useTotalCost } from "../hooks/useTotalCost"
 // Types
 interface DashboardStats {
   totalVehicles: number
@@ -138,10 +139,11 @@ const dashboardData: DashboardData = {
 
 // Total Cost Card Component
 function TotalCostCard() {
-  // Placeholder values - will be replaced with real API data
-  const totalCost = 1250.75 // Will come from API
-  const monthlyAverage = 208.46 // Will come from API
-  const lastMonthCost = 195.30 // Will come from API
+  const { totalCost, loading, error } = useTotalCost()
+  
+  // Fallback values for other metrics (keep same as before)
+  const monthlyAverage = 208.46 // Will come from API later
+  const lastMonthCost = 195.30 // Will come from API later
   
   const costChange = totalCost > lastMonthCost ? 'increase' : 'decrease'
   const costPercentage = lastMonthCost > 0 ? Math.abs(((totalCost - lastMonthCost) / lastMonthCost) * 100).toFixed(1) : 0
@@ -159,7 +161,7 @@ function TotalCostCard() {
           {/* Total Cost Display */}
           <div className="text-center">
             <div className="text-4xl font-bold text-emerald-400 mb-2">
-              {totalCost.toFixed(2)} دينار
+              {loading ? "جاري التحميل..." : error ? "خطأ في التحميل" : `${totalCost.toFixed(2)} دينار`}
             </div>
             <p className="text-gray-400 text-sm">إجمالي تكلفة الصيانة</p>
           </div>
@@ -222,7 +224,9 @@ function TotalCostCard() {
               <div className="border-t border-gray-600 pt-2 mt-2">
                 <div className="flex justify-between font-medium">
                   <span className="text-emerald-400">الإجمالي</span>
-                  <span className="text-emerald-400">{totalCost.toFixed(2)} دينار</span>
+                  <span className="text-emerald-400">
+                    {loading ? "جاري التحميل..." : error ? "خطأ" : `${totalCost.toFixed(2)} دينار`}
+                  </span>
                 </div>
               </div>
             </div>

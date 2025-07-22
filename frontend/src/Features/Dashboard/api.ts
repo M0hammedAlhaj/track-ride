@@ -14,3 +14,6 @@ export const getRecentVehicle =() =>
 
 export const count_overdue_maintenance = () =>
     axiosWithAuth.get("/users/maintenance-record/count-overdue");
+
+export const total_maintenance_cost = () =>
+    axiosWithAuth.get("/maintenance-records/total-cost");
