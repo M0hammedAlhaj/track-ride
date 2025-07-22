@@ -15,13 +15,17 @@ public class MaintenanceRecordResources {
 
     private final LocalDate reminderDate;
 
-    private final String vehicleId;
-
     private final String description;
 
     private final BigDecimal price;
 
     private final MaintenanceStatus status;
+
+    private String vehicleId;
+
+    private String vehicleName;
+
+    private String vehicleLicense;
 
     public MaintenanceRecordResources(MaintenanceRecord maintenanceRecord) {
         this.type = maintenanceRecord.getType().toString();
@@ -29,9 +33,11 @@ public class MaintenanceRecordResources {
         this.reminderDate = maintenanceRecord.getReminder();
         this.price = maintenanceRecord.getPrice();
         this.description = maintenanceRecord.getDescription();
-        this.vehicleId = maintenanceRecord.getVehicle() != null
-                ? maintenanceRecord.getVehicle().getId().toString()
-                : null;
         this.status = maintenanceRecord.getStatus();
+        if (maintenanceRecord.getVehicle() != null) {
+            this.vehicleId = maintenanceRecord.getId().toString();
+            this.vehicleName = maintenanceRecord.getVehicle().getName();
+            this.vehicleLicense = maintenanceRecord.getVehicle().getLicense();
+        }
     }
 }

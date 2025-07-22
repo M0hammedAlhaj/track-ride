@@ -58,8 +58,8 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
     @Transactional(readOnly = true)
     public Optional<MaintenanceRecord> findLastMaintenanceRecordByVehicleId(UUID vehicleId) {
         return em.createQuery("SELECT m FROM MaintenanceRecord m " +
-                        "WHERE m.vehicle.id =:vehicleId " +
-                        "ORDER BY m.createdAt desc ", MaintenanceRecord.class)
+                              "WHERE m.vehicle.id =:vehicleId " +
+                              "ORDER BY m.createdAt desc ", MaintenanceRecord.class)
                 .setParameter("vehicleId", vehicleId)
                 .getResultList().stream().findFirst();
     }
@@ -78,13 +78,14 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
                                                                                 MaintenanceStatus status) {
         return em.createQuery(
                         "SELECT m FROM MaintenanceRecord m " +
-                                "WHERE m.reminder = (" +
-                                "    SELECT MIN(m2.reminder) FROM MaintenanceRecord m2 " +
-                                "    WHERE m2.vehicle.id = m.vehicle.id AND m2.status = :status" +
-                                ") " +
-                                "AND m.vehicle.owner.id = :ownerId AND m.status = :status", MaintenanceRecord.class)
+                        "WHERE m.reminder = (" +
+                        "    SELECT MIN(m2.reminder) FROM MaintenanceRecord m2 " +
+                        "    WHERE m2.vehicle.id = m.vehicle.id AND m2.status = :status" +
+                        ") " +
+                        "AND m.vehicle.owner.id = :ownerId AND m.status = :status ORDER BY m.reminder", MaintenanceRecord.class)
                 .setParameter("ownerId", ownerId)
                 .setParameter("status", status)
+                .setMaxResults(5)
                 .getResultList();
     }
 
