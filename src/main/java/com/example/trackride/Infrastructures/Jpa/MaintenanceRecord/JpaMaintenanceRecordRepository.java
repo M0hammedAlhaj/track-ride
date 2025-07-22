@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -95,6 +96,13 @@ public class JpaMaintenanceRecordRepository implements MaintenanceRecordReposito
                 .setParameter("ownerId", ownerId)
                 .setParameter("status", MaintenanceStatus.UP_COMING)
                 .setParameter("now", LocalDate.now())
+                .getSingleResult();
+    }
+
+    @Override
+    public BigDecimal calculateTotalMaintenanceByOwnerId(UUID ownerId) {
+        return em.createQuery("SELECT sum (m.price) FROM MaintenanceRecord m WHERE m.vehicle.owner.id =:ownerId", BigDecimal.class)
+                .setParameter("ownerId", ownerId)
                 .getSingleResult();
     }
 }
