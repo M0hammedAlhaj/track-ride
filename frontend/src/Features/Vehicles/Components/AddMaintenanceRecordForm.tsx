@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { FormError, FormFieldWrapper } from "@/components/ui/form-error"
 import { Plus, Calendar, DollarSign, Settings, FileText, Loader2 } from "lucide-react"
 import { useMaintenanceTypes } from "../hooks/useMaintenanceTypes"
+import { maintenanceRecordSchema, type MaintenanceRecordFormData as ValidationFormData } from "../../../lib/validations"
 import { MaintenanceType } from "../../../types"
 
 interface MaintenanceRecordFormData {
@@ -22,7 +26,6 @@ interface AddMaintenanceRecordFormProps {
 
 export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaintenanceRecordFormProps) {
   const [open, setOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { maintenanceTypes, loading: typesLoading, error: typesError } = useMaintenanceTypes()
   
   // Helper function to get maintenance type by key
@@ -38,51 +41,62 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
     date.setDate(date.getDate() + days)
     return date.toISOString().split('T')[0]
   }
-  
-  const [formData, setFormData] = useState<MaintenanceRecordFormData>({
-    type: '',
-    description: '',
-    price: 0.01, // Start with minimum valid price instead of 0
-    reminderDate: getDefaultReminderDate(),
-    useCustomReminder: false
-  })
 
-  const handleInputChange = (field: keyof MaintenanceRecordFormData, value: string | number | boolean) => {
-    setFormData(prev => {
-      const newData = { ...prev, [field]: value }
-      
-      // Auto-update reminder date when service type changes and not using custom reminder
-      if (field === 'type' && !prev.useCustomReminder) {
-        newData.reminderDate = getDefaultReminderDate(value as string)
-      }
-      
-      return newData
-    })
-  }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    watch,
+    setValue,
+    setError,
+  } = useForm<ValidationFormData>({
+    resolver: zodResolver(maintenanceRecordSchema),
+    defaultValues: {
+      type: '',
+      description: '',
+      price: 0.01,
+      reminderDate: getDefaultReminderDate(),
+      useCustomReminder: false
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    try {
-      await onSubmit(formData)
-      setOpen(false)
-      // Reset form
-      setFormData({
-        type: '',
-        description: '',
-        price: 0.01, // Reset to minimum valid price
-        reminderDate: getDefaultReminderDate(),
-        useCustomReminder: false
-      })
-    } catch (error) {
-      console.error('Error submitting form:', error)
-    } finally {
-      setIsSubmitting(false)
+  const watchedType = watch('type');
+  const watchedUseCustomReminder = watch('useCustomReminder');
+
+  // Auto-update reminder date when service type changes and not using custom reminder
+  useEffect(() => {
+    if (watchedType && !watchedUseCustomReminder) {
+      setValue('reminderDate', getDefaultReminderDate(watchedType));
     }
-  }
+  }, [watchedType, watchedUseCustomReminder, setValue]);
 
-  return (
+  const onFormSubmit = async (data: ValidationFormData) => {
+    try {
+      const formData: MaintenanceRecordFormData = {
+        type: data.type,
+        description: data.description,
+        price: data.price,
+        reminderDate: data.reminderDate,
+        useCustomReminder: data.useCustomReminder
+      };
+      
+      await onSubmit(formData);
+      setOpen(false);
+      reset();
+    } catch (error: any) {
+      // Handle specific field errors if they come from the server
+      if (error.response?.data?.errors) {
+        const serverErrors = error.response.data.errors;
+        Object.entries(serverErrors).forEach(([field, message]) => {
+          setError(field as keyof ValidationFormData, {
+            type: 'server',
+            message: message as string,
+          });
+        });
+      }
+    }
+  };  return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {trigger || (
@@ -105,9 +119,9 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
             قم بإضافة سجل صيانة جديد للمركبة مع تحديد نوع الخدمة والتفاصيل المطلوبة
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
           {/* Maintenance Type */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.type?.message}>
             <Label htmlFor="type" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Settings className="h-4 w-4 text-emerald-400" />
               نوع الخدمة
@@ -125,10 +139,11 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
                 </div>
                 <select
                   id="type"
-                  value={formData.type}
-                  onChange={(e) => handleInputChange('type', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  required
+                  {...register("type")}
+                  className={`w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                    errors.type ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                  }`}
+                  disabled={isSubmitting}
                 >
                   <option value="">اختر نوع الخدمة (البيانات الافتراضية)</option>
                   {maintenanceTypes?.map((type) => (
@@ -145,10 +160,11 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
               <div className="space-y-2">
                 <select
                   id="type"
-                  value={formData.type}
-                  onChange={(e) => handleInputChange('type', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  required
+                  {...register("type")}
+                  className={`w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                    errors.type ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                  }`}
+                  disabled={isSubmitting}
                 >
                   <option value="">اختر نوع الخدمة</option>
                   {maintenanceTypes?.map((type) => (
@@ -164,26 +180,28 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
                 )}
               </div>
             )}
-          </div>
+          </FormFieldWrapper>
 
           {/* Description */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.description?.message}>
             <Label htmlFor="description" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <FileText className="h-4 w-4 text-emerald-400" />
-              وصف الخدمة
+              وصف الخدمة <span className="text-gray-500 text-xs">(اختياري)</span>
             </Label>
             <textarea
               id="description"
-              placeholder="أدخل وصف تفصيلي للخدمة المطلوبة..."
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              placeholder="أدخل وصف تفصيلي للخدمة المطلوبة... (اختياري)"
+              {...register("description")}
+              className={`w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                errors.description ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+              }`}
               rows={3}
+              disabled={isSubmitting}
             />
-          </div>
+          </FormFieldWrapper>
 
           {/* Price */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.price?.message}>
             <Label htmlFor="price" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <DollarSign className="h-4 w-4 text-emerald-400" />
               السعر (دينار أردني)
@@ -192,20 +210,21 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
               id="price"
               type="number"
               placeholder="0.01"
-              value={formData.price || ''}
-              onChange={(e) => {
-                const value = parseFloat(e.target.value)
-                // Ensure minimum price is 0.01 (greater than zero as required by backend)
-                handleInputChange('price', value > 0 ? value : 0.01)
-              }}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
+              {...register("price", { 
+                valueAsNumber: true,
+                setValueAs: (v) => v === "" ? 0.01 : parseFloat(v)
+              })}
+              className={`bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 ${
+                errors.price ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+              }`}
               min="0.01"
               step="0.01"
+              disabled={isSubmitting}
             />
-          </div>
+          </FormFieldWrapper>
 
           {/* Reminder Date */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.reminderDate?.message}>
             <Label htmlFor="reminderDate" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Calendar className="h-4 w-4 text-emerald-400" />
               تاريخ التذكير التالي
@@ -216,33 +235,32 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
               <input
                 type="checkbox"
                 id="useCustomReminder"
-                checked={formData.useCustomReminder}
-                onChange={(e) => handleInputChange('useCustomReminder', e.target.checked)}
+                {...register("useCustomReminder")}
                 className="w-4 h-4 text-emerald-600 bg-gray-700 border-gray-600 rounded focus:ring-emerald-500"
+                disabled={isSubmitting}
               />
               <Label htmlFor="useCustomReminder" className="text-sm text-gray-300">
                 تخصيص تاريخ التذكير
               </Label>
             </div>
             
-            {!formData.useCustomReminder && formData.type && (
+            {!watchedUseCustomReminder && watchedType && (
               <div className="text-xs text-emerald-400 mb-2">
-                التذكير التلقائي: {Math.ceil((getMaintenanceTypeByKey(formData.type)?.timeInterval || 180) / 30)} شهر من اليوم
+                التذكير التلقائي: {Math.ceil((getMaintenanceTypeByKey(watchedType)?.timeInterval || 180) / 30)} شهر من اليوم
               </div>
             )}
             
             <Input
               id="reminderDate"
               type="date"
-              value={formData.reminderDate}
-              onChange={(e) => handleInputChange('reminderDate', e.target.value)}
-              disabled={!formData.useCustomReminder}
+              {...register("reminderDate")}
+              disabled={!watchedUseCustomReminder || isSubmitting}
               className={`bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-emerald-500 ${
-                !formData.useCustomReminder ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+                !watchedUseCustomReminder ? 'opacity-50 cursor-not-allowed' : ''
+              } ${errors.reminderDate ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''}`}
             />
             
-            {!formData.useCustomReminder ? (
+            {!watchedUseCustomReminder ? (
               <p className="text-xs text-gray-400">
                 التاريخ يُحدد تلقائياً حسب نوع الخدمة المختارة
               </p>
@@ -251,7 +269,7 @@ export default function AddMaintenanceRecordForm({ onSubmit, trigger }: AddMaint
                 يمكنك تحديد تاريخ مخصص للتذكير
               </p>
             )}
-          </div>
+          </FormFieldWrapper>
 
           {/* Form Actions */}
           <div className="flex gap-3 pt-4">

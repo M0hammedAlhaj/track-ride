@@ -1,32 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { FormError, FormFieldWrapper } from "@/components/ui/form-error";
+import { PasswordGuidelines, PasswordStrengthIndicator } from "@/components/ui/password-guidelines";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useRegister } from "../hooks/useRegister";
 import { useNavigate } from "react-router-dom";
+import { registerSchema, type RegisterFormData } from "../../../lib/validations";
 
 export default function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-
   const { register: registerUser, loading, error } = useRegister();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirmPassword) return alert("كلمة المرور غير متطابقة");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+    watch,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
+  const watchedPassword = watch('password');
+
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      await registerUser({ name, email, password, confirmPassword });
+      await registerUser(data);
       navigate("/login");
-    } catch {
-      // handled in hook
+    } catch (err: any) {
+      // Handle specific field errors if they come from the server
+      if (err.response?.data?.errors) {
+        const serverErrors = err.response.data.errors;
+        Object.entries(serverErrors).forEach(([field, message]) => {
+          setError(field as keyof RegisterFormData, {
+            type: 'server',
+            message: message as string,
+          });
+        });
+      }
     }
   };
 
@@ -139,73 +162,87 @@ export default function RegisterPage() {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <FormFieldWrapper error={errors.name?.message}>
                 <Label htmlFor="name" className="text-white font-medium">
                   الاسم
                 </Label>
                 <Input
                   id="name"
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12"
+                  {...register("name")}
+                  className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
+                    errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                  }`}
                   placeholder="أدخل اسمك"
-                  required
+                  disabled={isSubmitting}
                 />
-              </div>
+              </FormFieldWrapper>
 
-              <div className="space-y-2">
+              <FormFieldWrapper error={errors.email?.message}>
                 <Label htmlFor="email" className="text-white font-medium">
                   البريد الإلكتروني
                 </Label>
                 <Input
                   id="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12"
+                  {...register("email")}
+                  className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
+                    errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                  }`}
                   placeholder="example@mail.com"
-                  required
+                  disabled={isSubmitting}
                 />
-              </div>
+              </FormFieldWrapper>
 
-              <div className="space-y-2">
+              <FormFieldWrapper error={errors.password?.message}>
                 <Label htmlFor="password" className="text-white font-medium">
                   كلمة المرور
                 </Label>
                 <Input
                   id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12"
-                  placeholder="********"
-                  required
+                  {...register("password")}
+                  className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
+                    errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                  }`}
+                  placeholder="أدخل كلمة مرور قوية (8+ أحرف، أرقام، رموز)"
+                  disabled={isSubmitting}
                 />
-              </div>
+                
+                {/* Password Guidelines */}
+                {watchedPassword && (
+                  <div className="mt-3 p-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+                    <PasswordGuidelines password={watchedPassword} />
+                    <div className="mt-3">
+                      <PasswordStrengthIndicator password={watchedPassword} />
+                    </div>
+                  </div>
+                )}
+              </FormFieldWrapper>
 
-              <div className="space-y-2">
+              <FormFieldWrapper error={errors.confirmPassword?.message}>
                 <Label htmlFor="confirmPassword" className="text-white font-medium">
                   تأكيد كلمة المرور
                 </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12"
+                  {...register("confirmPassword")}
+                  className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
+                    errors.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                  }`}
                   placeholder="********"
-                  required
+                  disabled={isSubmitting}
                 />
-              </div>
+              </FormFieldWrapper>
 
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitting}
                 className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/25 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? (
+                {isSubmitting ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin ml-2" />
                     جاري التسجيل...

@@ -1,20 +1,16 @@
 import { useState, useEffect } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { FormError, FormFieldWrapper } from "@/components/ui/form-error"
 import { Car, Calendar, Hash, Palette, Loader2, CheckCircle, XCircle, Edit } from "lucide-react"
 import type { Vehicle } from "../../../types"
 import { useUpdateVehicle } from "../hooks"
-
-interface EditVehicleFormData {
-  name: string
-  model: string
-  year: string
-  license: string
-  color: string
-}
+import { vehicleSchema, type VehicleFormData } from "../../../lib/validations"
 
 interface EditVehicleFormProps {
   vehicle: Vehicle
@@ -25,15 +21,24 @@ interface EditVehicleFormProps {
 
 export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicleUpdated }: EditVehicleFormProps) {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
-  const [formData, setFormData] = useState<EditVehicleFormData>({
-    name: vehicle.name || "",
-    model: vehicle.model || "",
-    year: vehicle.year?.toString() || "",
-    license: vehicle.licensePlate || "",
-    color: vehicle.color || ""
-  })
-
   const { updateVehicle, loading: updateLoading, error: updateError } = useUpdateVehicle()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setError,
+  } = useForm<VehicleFormData>({
+    resolver: zodResolver(vehicleSchema),
+    defaultValues: {
+      name: vehicle.name || "",
+      model: vehicle.model || "",
+      year: vehicle.year?.toString() || "",
+      license: vehicle.licensePlate || "",
+      color: vehicle.color || ""
+    },
+  });
 
   const loading = updateLoading
   const error = updateError
@@ -41,31 +46,18 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
   // Reset form when modal opens or vehicle changes
   useEffect(() => {
     if (open) {
-      setFormData({
+      reset({
         name: vehicle.name || "",
         model: vehicle.model || "",
         year: vehicle.year?.toString() || "",
         license: vehicle.licensePlate || "",
         color: vehicle.color || ""
-      })
+      });
       setSubmitStatus('idle')
     }
-  }, [open, vehicle])
+  }, [open, vehicle, reset])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    // Check if we have all required data
-    if (!formData.name || !formData.model || !formData.year || !formData.license || !formData.color) {
-      setSubmitStatus('error')
-      return
-    }
-
+  const onSubmit = async (data: VehicleFormData) => {
     // Check if vehicle ID exists
     if (!vehicle.id) {
       setSubmitStatus('error')
@@ -76,11 +68,11 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
     
     try {
       const payload = {
-        name: formData.name.trim(),
-        model: formData.model.trim(),
-        year: parseInt(formData.year),
-        license: formData.license.trim(),
-        color: formData.color.trim()
+        name: data.name.trim(),
+        model: data.model.trim(),
+        year: parseInt(data.year),
+        license: data.license.trim(),
+        color: data.color.trim()
       }
 
       const result = await updateVehicle(vehicle.id, payload)
@@ -98,6 +90,16 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
       
     } catch (err: any) {
       setSubmitStatus('error')
+      // Handle specific field errors if they come from the server
+      if (err.response?.data?.errors) {
+        const serverErrors = err.response.data.errors;
+        Object.entries(serverErrors).forEach(([field, message]) => {
+          setError(field as keyof VehicleFormData, {
+            type: 'server',
+            message: message as string,
+          });
+        });
+      }
     }
   }
 
@@ -133,10 +135,10 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <fieldset disabled={loading}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <fieldset disabled={isSubmitting}>
             {/* Vehicle Name */}
-            <div className="space-y-2">
+            <FormFieldWrapper error={errors.name?.message}>
               <Label htmlFor="name" className="text-sm font-medium text-gray-300 flex items-center gap-2">
                 <Car className="h-4 w-4 text-emerald-400" />
                 اسم المركبة
@@ -144,16 +146,16 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
               <Input
                 id="name"
                 placeholder="أدخل اسم المركبة (مثل: سيارتي الشخصية)"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
-                required
+                {...register("name")}
+                className={`bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 ${
+                  errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                }`}
+                disabled={isSubmitting}
               />
-            </div>
+            </FormFieldWrapper>
 
           {/* Model */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.model?.message}>
             <Label htmlFor="model" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Hash className="h-4 w-4 text-emerald-400" />
               الموديل
@@ -161,16 +163,16 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
             <Input
               id="model"
               placeholder="أدخل موديل المركبة (مثل: تويوتا كامري)"
-              name="model"
-              value={formData.model}
-              onChange={handleInputChange}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
-              required
+              {...register("model")}
+              className={`bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 ${
+                errors.model ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+              }`}
+              disabled={isSubmitting}
             />
-          </div>
+          </FormFieldWrapper>
 
           {/* Year */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.year?.message}>
             <Label htmlFor="year" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Calendar className="h-4 w-4 text-emerald-400" />
               سنة الصنع
@@ -179,18 +181,18 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
               id="year"
               placeholder="أدخل سنة الصنع (مثل: 2020)"
               type="number"
-              name="year"
-              value={formData.year}
-              onChange={handleInputChange}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
+              {...register("year")}
+              className={`bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 ${
+                errors.year ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+              }`}
               min="1900"
               max={new Date().getFullYear() + 1}
-              required
+              disabled={isSubmitting}
             />
-          </div>
+          </FormFieldWrapper>
 
           {/* License Plate */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.license?.message}>
             <Label htmlFor="license" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Hash className="h-4 w-4 text-emerald-400" />
               رقم اللوحة
@@ -198,16 +200,16 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
             <Input
               id="license"
               placeholder="أدخل رقم اللوحة (مثل: أ ب ج 123)"
-              name="license"
-              value={formData.license}
-              onChange={handleInputChange}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
-              required
+              {...register("license")}
+              className={`bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 ${
+                errors.license ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+              }`}
+              disabled={isSubmitting}
             />
-          </div>
+          </FormFieldWrapper>
 
           {/* Color */}
-          <div className="space-y-2">
+          <FormFieldWrapper error={errors.color?.message}>
             <Label htmlFor="color" className="text-sm font-medium text-gray-300 flex items-center gap-2">
               <Palette className="h-4 w-4 text-emerald-400" />
               اللون
@@ -215,13 +217,13 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
             <Input
               id="color"
               placeholder="أدخل لون المركبة (مثل: أبيض، أسود، فضي)"
-              name="color"
-              value={formData.color}
-              onChange={handleInputChange}
-              className="bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500"
-              required
+              {...register("color")}
+              className={`bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-emerald-500 ${
+                errors.color ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+              }`}
+              disabled={isSubmitting}
             />
-          </div>
+          </FormFieldWrapper>
           </fieldset>
 
           {/* Form Actions */}
@@ -229,9 +231,9 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
             <Button
               type="submit"
               className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-emerald-500/25 transition-all duration-300"
-              disabled={loading || submitStatus === 'success'}
+              disabled={isSubmitting || submitStatus === 'success'}
             >
-              {loading ? (
+              {isSubmitting ? (
                 <>
                   <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                   جاري الحفظ...
@@ -251,7 +253,7 @@ export default function EditVehicleForm({ vehicle, open, onOpenChange, onVehicle
               variant="outline"
               onClick={() => onOpenChange(false)}
               className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
-              disabled={loading || submitStatus === 'success'}
+              disabled={isSubmitting || submitStatus === 'success'}
             >
               إلغاء
             </Button>
