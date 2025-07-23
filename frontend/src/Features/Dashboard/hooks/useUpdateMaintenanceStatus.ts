@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { update_maintenance_status } from '../api';
 
 interface UseUpdateMaintenanceStatusResult {
-  updateStatus: (recordId: string, status: 'COMPLETED' | 'CANCELED') => Promise<boolean>;
+  updateStatus: (recordId: string, status: 'COMPLETED' | 'CANCELED' | 'UP_COMING') => Promise<boolean>;
   loading: boolean;
   error: string | null;
 }
@@ -11,7 +11,7 @@ export const useUpdateMaintenanceStatus = (): UseUpdateMaintenanceStatusResult =
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateStatus = async (recordId: string, status: 'COMPLETED' | 'CANCELED'): Promise<boolean> => {
+  const updateStatus = async (recordId: string, status: 'COMPLETED' | 'CANCELED' | 'UP_COMING'): Promise<boolean> => {
     setLoading(true);
     setError(null);
     

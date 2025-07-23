@@ -9,6 +9,8 @@ import java.time.LocalDate;
 
 @Getter
 public class MaintenanceRecordResources {
+    private final String id;
+
     private final String type;
 
     private final LocalDate created;
@@ -28,6 +30,7 @@ public class MaintenanceRecordResources {
     private String vehicleLicense;
 
     public MaintenanceRecordResources(MaintenanceRecord maintenanceRecord) {
+        this.id = maintenanceRecord.getId().toString();
         this.type = maintenanceRecord.getType().toString();
         this.created = maintenanceRecord.getCreatedAt().toLocalDate();
         this.reminderDate = maintenanceRecord.getReminder();

@@ -31,6 +31,12 @@ export function useVehicleById(id: string) {
 
       setVehicle(transformedVehicle);
       setMaintenanceRecords(apiData.maintenanceRecords || []);
+      
+      // Debug logging
+      console.log('API Response:', response.data);
+      console.log('Maintenance Records from API:', apiData.maintenanceRecords);
+      console.log('Records count:', apiData.maintenanceRecords?.length || 0);
+      
       setError(null);
     } catch (err) {
       setError("حدث خطأ أثناء تحميل المركبة");

@@ -75,6 +75,7 @@ export default function VehicleDetails() {
         <MaintenanceRecordsCard 
           maintenanceRecords={maintenanceRecords} 
           onAddRecord={handleAddMaintenanceRecord}
+          onStatusUpdate={refetch}
         />
       </div>
     </div>

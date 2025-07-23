@@ -1,4 +1,5 @@
 export interface MaintenanceRecord {
+  id?: string;
   type: string;
   created: string;
   reminderDate: string;
