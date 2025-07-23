@@ -400,8 +400,18 @@ function UpcomingMaintenanceTable({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.map((item) => (
-                  <TableRow key={item.id} className="border-gray-600 hover:bg-gray-700/30">
+                {data.map((item) => {
+                  const reminderDate = new Date(item.reminderDate);
+                  const currentDate = new Date();
+                  currentDate.setHours(0, 0, 0, 0); // Reset time to compare only dates
+                  reminderDate.setHours(0, 0, 0, 0);
+                  const isOverdue = reminderDate < currentDate;
+                  
+                  return (
+                  <TableRow 
+                    key={item.id} 
+                    className={`border-gray-600 hover:bg-gray-700/30 ${isOverdue ? 'bg-red-900/20 border-red-500/30' : ''}`}
+                  >
                     <TableCell className="text-white font-medium text-right">{item.vehicleName}</TableCell>
                     <TableCell className="text-gray-300 font-mono text-right">{item.vehicleLicense}</TableCell>
                     <TableCell className="text-white font-medium text-right">
@@ -414,12 +424,17 @@ function UpcomingMaintenanceTable({
                         day: '2-digit'
                       })}
                     </TableCell>
-                    <TableCell className="text-emerald-400 font-medium text-right">
+                    <TableCell className={`font-medium text-right ${isOverdue ? 'text-red-400' : 'text-emerald-400'}`}>
                       {new Date(item.reminderDate).toLocaleDateString("en-US", {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit'
                       })}
+                      {isOverdue && (
+                        <span className="mr-2 text-red-500">
+                          <AlertTriangle className="w-4 h-4 inline" />
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-start">
@@ -445,7 +460,8 @@ function UpcomingMaintenanceTable({
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  )
+                })}
               </TableBody>
             </Table>
           </div>
