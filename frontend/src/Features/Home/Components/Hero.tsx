@@ -1,8 +1,28 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../app/AuthContext";
 
 export default function Hero() {
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+
+  const handleStartNow = () => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    } else {
+      navigate("/register");
+    }
+  };
+
+  const handleExploreFeatures = () => {
+    if (isLoggedIn) {
+      navigate("/vehicles");
+    } else {
+      navigate("/login");
+    }
+  };
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
@@ -41,6 +61,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               size="lg"
+              onClick={handleStartNow}
               className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-2xl hover:shadow-emerald-500/25 transition-all duration-300 hover:scale-105"
             >
               ابدأ الآن
@@ -48,6 +69,7 @@ export default function Hero() {
             <Button
               size="lg"
               variant="outline"
+              onClick={handleExploreFeatures}
               className="border-emerald-400 text-emerald-400 hover:bg-emerald-400 hover:text-gray-900 px-8 py-4 text-lg font-semibold rounded-xl transition-all duration-300 hover:scale-105 bg-transparent"
             >
               استكشف الميزات

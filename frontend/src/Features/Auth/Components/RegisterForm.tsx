@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FormError, FormFieldWrapper } from "@/components/ui/form-error";
 import { PasswordGuidelines, PasswordStrengthIndicator } from "@/components/ui/password-guidelines";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 import { useRegister } from "../hooks/useRegister";
 import { useNavigate } from "react-router-dom";
 import { registerSchema, type RegisterFormData } from "../../../lib/validations";
@@ -16,6 +17,8 @@ import { registerSchema, type RegisterFormData } from "../../../lib/validations"
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { register: registerUser, loading, error } = useRegister();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -185,7 +188,6 @@ export default function RegisterPage() {
                 </Label>
                 <Input
                   id="email"
-                  type="email"
                   {...register("email")}
                   className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
                     errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
@@ -199,16 +201,30 @@ export default function RegisterPage() {
                 <Label htmlFor="password" className="text-white font-medium">
                   كلمة المرور
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                  className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
-                    errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
-                  }`}
-                  placeholder="أدخل كلمة مرور قوية (8+ أحرف، أرقام، رموز)"
-                  disabled={isSubmitting}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 pr-10 ${
+                      errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                    }`}
+                    placeholder="أدخل كلمة مرور قوية (8+ أحرف، أرقام، رموز)"
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    disabled={isSubmitting}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
                 
                 {/* Password Guidelines */}
                 {watchedPassword && (
@@ -225,16 +241,30 @@ export default function RegisterPage() {
                 <Label htmlFor="confirmPassword" className="text-white font-medium">
                   تأكيد كلمة المرور
                 </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...register("confirmPassword")}
-                  className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 ${
-                    errors.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
-                  }`}
-                  placeholder="********"
-                  disabled={isSubmitting}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    {...register("confirmPassword")}
+                    className={`bg-white/10 border-white/30 text-white placeholder:text-gray-400 focus:border-emerald-400 focus:ring-emerald-400/50 rounded-lg h-12 pr-10 ${
+                      errors.confirmPassword ? 'border-red-500 focus:border-red-500 focus:ring-red-500/50' : ''
+                    }`}
+                    placeholder="أعد إدخال كلمة المرور"
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                    disabled={isSubmitting}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </FormFieldWrapper>
 
               <Button
