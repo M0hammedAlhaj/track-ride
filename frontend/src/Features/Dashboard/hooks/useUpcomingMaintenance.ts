@@ -22,6 +22,9 @@ export function useUpcomingMaintenance() {
   const fetchUpcomingMaintenance = async () => {
     try {
       setLoading(true)
+      setError(null) // Clear previous errors
+      
+      console.log('Fetching upcoming maintenance data...');
       
       // Fetch upcoming maintenance data
       const upcomingResponse = await upconing_maintenance()
@@ -30,6 +33,7 @@ export function useUpcomingMaintenance() {
       
       // Check if upcoming maintenance response is valid
       if (!upcomingResponse.data || !upcomingResponse.data.data || !Array.isArray(upcomingResponse.data.data)) {
+        console.log('No data or invalid data structure, setting empty array');
         setData([])
         setError(null)
         return
@@ -40,8 +44,13 @@ export function useUpcomingMaintenance() {
       // Transform the API response to match our interface
       const transformedData = upcomingResponse.data.data.map((record: any, index: number) => {
         console.log('Processing record:', record); // Debug log
+        console.log('Available record fields:', Object.keys(record)); // Show all available fields
+        console.log('Record ID field:', record.id);
+        console.log('Record maintenanceRecordId field:', record.maintenanceRecordId);
+        console.log('Record vehicleId field:', record.vehicleId);
+        
         return {
-          id: record.vehicleId || `temp-${index}`,
+          id: record.id || record.maintenanceRecordId || record.recordId || `temp-${index}`, // Try multiple possible ID fields
           type: record.type || 'غير محدد',
           created: record.created,
           reminderDate: record.reminderDate,
@@ -55,11 +64,13 @@ export function useUpcomingMaintenance() {
       })
       
       console.log('Transformed data:', transformedData); // Debug log
+      console.log('Setting upcoming maintenance data with', transformedData.length, 'records');
       
       setData(transformedData)
       setError(null)
     } catch (err: any) {
-      setError('حدث خطأ أثناء تحميل بيانات الصيانة القادمة')
+      const errorMessage = 'حدث خطأ أثناء تحميل بيانات الصيانة القادمة';
+      setError(errorMessage)
       console.error('Error fetching upcoming maintenance data:', err)
       setData([]) // Set empty array on error
     } finally {

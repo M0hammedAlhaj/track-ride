@@ -42,19 +42,39 @@ const dashboardData: DashboardData = {
 export default function Dashboard() {
   const { chartData } = dashboardData
   const { count, loading, error } = useCountVehicles()
-  const { upcomingDate, loading: upcomingLoading, error: upcomingError } = useFetchUpcoming()
+  const { upcomingDate, loading: upcomingLoading, error: upcomingError, refetch: refetchUpcomingCount } = useFetchUpcoming()
   const { vehicle, loading: recentLoading, error: recentError } = useRecentVehicle()
   const { data: upcomingMaintenanceData, loading: upcomingMaintenanceLoading, error: upcomingMaintenanceError, refetch: refetchUpcomingMaintenance } = useUpcomingMaintenance()
-  const { count: overdueCount, loading: overdueLoading, error: overdueError } = useCountOverdue()
+  const { count: overdueCount, loading: overdueLoading, error: overdueError, refetch: refetchOverdue } = useCountOverdue()
   const { activities: recentActivity, loading: recentActivityLoading, error: recentActivityError } = useRecentActivity()
   const { getTypeInArabic } = useMaintenanceTypes()
   const { updateStatus, loading: updateLoading, error: updateError } = useUpdateMaintenanceStatus()
 
   const handleStatusUpdate = async (recordId: string, status: 'COMPLETED' | 'CANCELED') => {
+    console.log('Starting status update for record:', recordId, 'status:', status);
+    
     const success = await updateStatus(recordId, status)
+    console.log('Update status result:', success);
+    
     if (success) {
-      // Refresh the upcoming maintenance data
-      await refetchUpcomingMaintenance()
+      console.log('Update successful, starting refetch operations...');
+      
+      try {
+        // Add a small delay to allow backend to process the change
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Refresh all maintenance-related data
+        await Promise.all([
+          refetchUpcomingMaintenance(), // Refresh upcoming maintenance table
+          refetchUpcomingCount(),       // Refresh upcoming maintenance count metric
+          refetchOverdue()              // Refresh overdue maintenance count metric
+        ])
+        console.log('All refetch operations completed successfully');
+      } catch (error) {
+        console.error('Error during refetch operations:', error);
+      }
+    } else {
+      console.log('Update failed, skipping refetch');
     }
   }
 
