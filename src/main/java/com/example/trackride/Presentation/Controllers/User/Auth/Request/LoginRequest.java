@@ -1,4 +1,4 @@
-package com.example.trackride.Presentation.Controllers.User.Auth.Response;
+package com.example.trackride.Presentation.Controllers.User.Auth.Request;
 
 
 import jakarta.validation.constraints.Email;
