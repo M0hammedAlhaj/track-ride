@@ -18,7 +18,8 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-    command: mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.devtools.restart.enabled=true"
+      - maven_cache:/root/.m2
+    command: mv`n spring-boot:run -Dspring-boot.run.jvmArguments="-Dspring.devtools.restart.enabled=true"
     ports:
       - "8080:8080"
     environment:
@@ -39,4 +40,5 @@ services:
       - backend
 
 volumes:
+  maven_cache: {}
   postgres_data:
