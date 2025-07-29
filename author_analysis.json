@@ -1,0 +1,86 @@
+{
+  "repository": {
+    "name": "track-ride",
+    "owner": "M0hammedAlhaj",
+    "url": "https://github.com/M0hammedAlhaj/track-ride",
+    "description": "Smart vehicle maintenance management system"
+  },
+  "author": {
+    "name": "MohammedMamounHamedAlhaj",
+    "github_username": "M0hammedAlhaj",
+    "github_id": "134335033",
+    "github_url": "https://github.com/M0hammedAlhaj",
+    "emails": {
+      "github": "134335033+M0hammedAlhaj@users.noreply.github.com",
+      "personal": "mohammedalhaj@gmail.com"
+    }
+  },
+  "analysis_metadata": {
+    "analysis_date": "2025-07-29",
+    "total_commits_analyzed": 2,
+    "unique_authors_found": 2,
+    "primary_author_commits": 1
+  },
+  "sources": {
+    "git_commits": {
+      "found": true,
+      "author_name": "MohammedMamounHamedAlhaj",
+      "author_email": "134335033+M0hammedAlhaj@users.noreply.github.com"
+    },
+    "test_files": {
+      "found": true,
+      "email": "mohammedalhaj@gmail.com",
+      "username": "mohammedalhaj",
+      "location": "src/test/java/com/example/trackride/Application/User/UseCase/UserRegistrationUseCaseTest.java"
+    },
+    "configuration_files": {
+      "pom_xml": {
+        "developer_section": "empty",
+        "intentionally_blank": true
+      },
+      "package_json": {
+        "author_field": "not_found"
+      }
+    },
+    "documentation": {
+      "readme": {
+        "found": true,
+        "contains_author_info": false
+      },
+      "license": {
+        "found": false
+      },
+      "author_files": {
+        "found": false
+      }
+    },
+    "source_code": {
+      "author_comments": "not_found",
+      "copyright_headers": "not_found"
+    }
+  },
+  "contact_information": {
+    "primary_contact": "GitHub profile",
+    "github_profile": "https://github.com/M0hammedAlhaj",
+    "verified_emails": [
+      "mohammedalhaj@gmail.com"
+    ],
+    "github_emails": [
+      "134335033+M0hammedAlhaj@users.noreply.github.com"
+    ]
+  },
+  "project_characteristics": {
+    "type": "personal_project",
+    "license": "none",
+    "contributors": 1,
+    "development_status": "active",
+    "visibility": "public"
+  },
+  "recommendations": [
+    "Add proper author information to pom.xml developer section",
+    "Include author field in package.json",
+    "Add a LICENSE file with author attribution",
+    "Consider adding author contact information to README.md",
+    "Add author comments to main source files following standard conventions"
+  ]
+}
