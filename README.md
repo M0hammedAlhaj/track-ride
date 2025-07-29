@@ -36,3 +36,12 @@
 - Postman (for API testing)
 - Git (version control)
 
+## 🚀 Running the Project
+
+### With Docker Compose (Recommended)
+
+1. **Clone and start**
+   ```bash
+   git clone https://github.com/yourusername/track-ride.git
+   cd track-ride
+   docker compose up --build -d
