@@ -44,4 +44,4 @@
    ```bash
    git clone https://github.com/yourusername/track-ride.git
    cd track-ride
-   docker compose up --build -d
+   docker-compose up --build -d
