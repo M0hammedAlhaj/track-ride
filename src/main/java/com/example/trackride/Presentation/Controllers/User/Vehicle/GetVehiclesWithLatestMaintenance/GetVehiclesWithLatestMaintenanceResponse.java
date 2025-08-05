@@ -1,4 +1,4 @@
-package com.example.trackride.Presentation.Controllers.User.Vehicles.GetVehiclesWithLatestMaintenance;
+package com.example.trackride.Presentation.Controllers.User.Vehicle.GetVehiclesWithLatestMaintenance;
 
 import com.example.trackride.Application.Vehicle.DTO.VehicleMaintenanceDTO;
 import com.example.trackride.Core.Vehicle.Entity.Vehicle;

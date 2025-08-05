@@ -1,6 +1,6 @@
 package com.example.trackride.Application.User.UseCase;
 
-import com.example.trackride.Application.User.DTO.UserAssignVehicleDTO;
+import com.example.trackride.Application.User.DTO.UserCreateVehicleDTO;
 import com.example.trackride.Application.Vehicle.DTO.VehicleRegistrationDTO;
 import com.example.trackride.Application.Vehicle.UseCase.VehicleRegistrationUseCase;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
@@ -11,17 +11,15 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @AllArgsConstructor
-public class UserAssignVehicleUseCase {
+public class CreateVehicleUseCase {
     private final UserRepository userRepository;
     private final VehicleRegistrationUseCase vehicleRegistration;
 
     @Transactional
-    public User execute(UserAssignVehicleDTO dto) {
-        User user = userRepository.findById(UUID.fromString(dto.id()))
+    public Vehicle execute(UserCreateVehicleDTO dto) {
+        User user = userRepository.findById(dto.id())
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("User not found By %s ", dto.id())));
 
         Vehicle vehicle = vehicleRegistration.execute(new VehicleRegistrationDTO(dto.license(),
@@ -32,6 +30,6 @@ public class UserAssignVehicleUseCase {
 
         user.assignVehicle(vehicle);
         userRepository.update(user);
-        return user;
+        return vehicle;
     }
 }

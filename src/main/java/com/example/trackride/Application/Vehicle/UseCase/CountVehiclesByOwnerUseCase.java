@@ -11,7 +11,7 @@ import java.util.UUID;
 public class CountVehiclesByOwnerUseCase {
     private final VehicleRepository vehicleRepository;
 
-    public Long execute(String userId) {
-        return vehicleRepository.countVehiclesByOwnerId(UUID.fromString(userId));
+    public Long execute(UUID userId) {
+        return vehicleRepository.countVehiclesByOwnerId(userId);
     }
 }

@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class DeleteVehicleUseCase {
@@ -21,10 +19,10 @@ public class DeleteVehicleUseCase {
 
     @Transactional
     public void execute(DeleteVehicleDTO dto) {
-        User user = userRepository.findById(UUID.fromString(dto.userID()))
+        User user = userRepository.findById(dto.userID())
                 .orElseThrow(() -> new ResourceNotFoundException(dto.userID()));
 
-        Vehicle vehicle = vehicleRepository.findById(UUID.fromString(dto.vehicleId()))
+        Vehicle vehicle = vehicleRepository.findById(dto.vehicleId())
                 .orElseThrow(() -> new ResourceNotFoundException(dto.vehicleId()));
 
         if (!vehicle.belongsTo(user)) {

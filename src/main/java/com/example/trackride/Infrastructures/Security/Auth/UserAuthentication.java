@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 
 public class UserAuthentication implements UserDetails {
@@ -32,4 +33,8 @@ public class UserAuthentication implements UserDetails {
     }
 
     public String getId() { return user.getId().toString(); }
+
+    public UUID getUuid() {
+        return user.getId();
+    }
 }

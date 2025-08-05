@@ -1,4 +1,4 @@
-package com.example.trackride.Presentation.Controllers.Vehicle.UpdateVehicle;
+package com.example.trackride.Presentation.Controllers.User.Vehicle;
 
 import lombok.Getter;
 

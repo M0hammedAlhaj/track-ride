@@ -1,6 +1,6 @@
 package com.example.trackride.Application.User.UseCase;
 
-import com.example.trackride.Application.User.DTO.UserAssignVehicleDTO;
+import com.example.trackride.Application.User.DTO.UserCreateVehicleDTO;
 import com.example.trackride.Application.Vehicle.DTO.VehicleRegistrationDTO;
 import com.example.trackride.Application.Vehicle.UseCase.VehicleRegistrationUseCase;
 import com.example.trackride.Core.Shared.Exception.ResourceNotFoundException;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserAssignVehicleUseCaseTest {
+class CreateVehicleUseCaseUseCaseTest {
 
     @Mock
     UserRepository userRepository;
@@ -31,7 +31,7 @@ class UserAssignVehicleUseCaseTest {
     VehicleRegistrationUseCase vehicleRegistrationUseCase;
 
     @InjectMocks
-    UserAssignVehicleUseCase underTest;
+    CreateVehicleUseCase underTest;
 
     @Test
     public void user_assign_new_vehicle_successful() {
@@ -41,8 +41,8 @@ class UserAssignVehicleUseCaseTest {
         String color = "color";
         String year = "2012";
         String name = "name";
-        UserAssignVehicleDTO userAssignVehicleDTO =
-                new UserAssignVehicleDTO(id.toString(), license, model, color, year, name);
+        UserCreateVehicleDTO userCreateVehicleDTO =
+                new UserCreateVehicleDTO(id, license, model, color, year, name);
 
         User user = new User();
         user.setId(id);
@@ -62,7 +62,7 @@ class UserAssignVehicleUseCaseTest {
         when(userRepository.update(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        user = underTest.execute(userAssignVehicleDTO);
+        vehicle = underTest.execute(userCreateVehicleDTO);
 
         assertThat(user.getVehicles()).hasSize(1);
         assertThat(user.getVehicles()).containsExactly(vehicle);
@@ -77,8 +77,8 @@ class UserAssignVehicleUseCaseTest {
         String year = "2012";
         String name = "name";
 
-        UserAssignVehicleDTO dto = new UserAssignVehicleDTO(
-                id.toString(), license, model, color, year, name);
+        UserCreateVehicleDTO dto = new UserCreateVehicleDTO(
+                id, license, model, color, year, name);
 
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 

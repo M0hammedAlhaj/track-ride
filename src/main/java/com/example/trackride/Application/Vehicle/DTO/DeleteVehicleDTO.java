@@ -1,4 +1,6 @@
 package com.example.trackride.Application.Vehicle.DTO;
 
-public record DeleteVehicleDTO(String vehicleId, String userID) {
+import java.util.UUID;
+
+public record DeleteVehicleDTO(UUID vehicleId,UUID userID) {
 }

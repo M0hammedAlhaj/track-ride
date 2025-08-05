@@ -1,23 +1,24 @@
 package com.example.trackride.Application.Vehicle.DTO;
 
-import com.example.trackride.Presentation.Controllers.Vehicle.UpdateVehicle.UpdateVehicleRequest;
+import com.example.trackride.Presentation.Controllers.User.Vehicle.UpdateVehicleRequest;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Year;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class VehicleUpdateDTO {
-    private String userId;
-    private String vehicleId;
+    private UUID userId;
+    private UUID vehicleId;
     private String license;
     private String model;
     private String color;
     private Year year;
     private String name;
 
-    public VehicleUpdateDTO(UpdateVehicleRequest request, String userId, String vehicleId) {
+    public VehicleUpdateDTO(UpdateVehicleRequest request, UUID userId, UUID vehicleId) {
         this.userId = userId;
         this.vehicleId = vehicleId;
 

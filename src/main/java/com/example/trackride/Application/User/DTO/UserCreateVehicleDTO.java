@@ -1,6 +1,8 @@
 package com.example.trackride.Application.User.DTO;
 
-public record UserAssignVehicleDTO(String id ,
+import java.util.UUID;
+
+public record UserCreateVehicleDTO(UUID id ,
                                    String license,
                                    String model,
                                    String color,

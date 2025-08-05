@@ -1,11 +1,11 @@
-package com.example.trackride.Presentation.Controllers.User.AssignVehicle;
+package com.example.trackride.Presentation.Controllers.User.Vehicle;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class AssignVehicleRequest {
+public class CreateVehicleRequest {
     @NotBlank
     private String name;
 

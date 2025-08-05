@@ -5,7 +5,6 @@ import com.example.trackride.Core.Vehicle.Repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -13,7 +12,8 @@ import java.util.UUID;
 public class GetMostRecentVehicleByOwnerUseCase {
     private final VehicleRepository vehicleRepository;
 
-    public Optional<Vehicle> execute(String userId) {
-        return vehicleRepository.findMostRecentVehicleByOwnerId(UUID.fromString(userId));
+    public Vehicle execute(UUID userId) {
+        return vehicleRepository.findMostRecentVehicleByOwnerId(userId)
+                .orElse(null);
     }
 }

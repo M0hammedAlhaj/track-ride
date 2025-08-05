@@ -1,4 +1,4 @@
-package com.example.trackride.Presentation.Controllers.User.Vehicles.GetVehiclesWithLatestMaintenance;
+package com.example.trackride.Presentation.Controllers.User.Vehicle.GetVehiclesWithLatestMaintenance;
 
 import com.example.trackride.Application.Vehicle.DTO.VehicleMaintenanceDTO;
 import com.example.trackride.Application.Vehicle.UseCase.GetVehiclesWithLatestMaintenance;
@@ -35,7 +35,7 @@ public class GetVehiclesWithLatestMaintenanceController {
         
         UUID userId = UUID.fromString(userAuthentication.getId());
         List<VehicleMaintenanceDTO> dto = useCase.execute(userId, page, size);
-        Long totalElements = countVehiclesByOwnerUseCase.execute(userAuthentication.getId());
+        Long totalElements = countVehiclesByOwnerUseCase.execute(userAuthentication.getUuid());
 
         return ResponseEntity.ok(new GetVehiclesWithLatestMaintenanceResponse(dto, totalElements, page, size, "Retrieve Successful"));
     }

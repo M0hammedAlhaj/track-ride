@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Year;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,13 +23,13 @@ public class UpdateVehicleUseCase {
     @Transactional
     public Vehicle execute(VehicleUpdateDTO dto) {
 
-        String vehicleId = dto.getVehicleId();
-        String userId = dto.getUserId();
+        var vehicleId = dto.getVehicleId();
+        var userId = dto.getUserId();
 
-        Vehicle vehicle = vehicleRepository.findById(UUID.fromString(vehicleId))
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new ResourceNotFoundException(vehicleId));
 
-        User user = userRepository.findById(UUID.fromString(userId))
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(userId));
 
         if (!vehicle.belongsTo(user)) {
